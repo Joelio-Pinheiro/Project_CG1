@@ -4,20 +4,25 @@
 #include <GL/glew.h>  
 
 namespace utils {
-    class canvas {
+    struct Position {
+        float x;
+        float y;
+        float z;
+    };
+    class window {
         private:
-            int WIDTH;
-            int HEIGHT;
+            int WWindow;
+            int HWindow;
+            Position position;
+            SDL_Window *w;
         public:
-            SDL_Window *window;
-            SDL_GLContext glContext;
-            canvas();
-            ~canvas();
-            void CreateWindow();
-            void CreateContext();
-            void DestroyContext() { SDL_GL_DeleteContext(this->glContext); }
-            int getWidth() { return this->WIDTH; }
-            int getHeight() { return this->HEIGHT; }
+            window(int width, int height);
+            ~window();
+
+            int getWidth() { return this->WWindow; }
+            int getHeight() { return this->HWindow; }
+            Position getPosition() { return this->position; }
+            void setPosition(float x, float y, float z) { this->position.x = x; this->position.y = y; this->position.z = z; }
         };
 }
 #endif 
