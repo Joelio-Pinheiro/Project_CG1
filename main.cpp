@@ -1,16 +1,18 @@
 #include <SDL.h>
 #include <iostream>
 #include "headers/utils.h"
+#include "headers/Scene.h"
 #include <GL/glew.h>  
 #include <vector>
 
 
 int main(int argc, char **argv)
 {
-    utils::window myCanvas(800, 600);
+    utils::window myCanvas(800.0f, 600.0f);
+    Scene myScene(800.0f, 600.0f, -5.0f, &myCanvas);
+    
     std::cout << "Window dimensions: " << myCanvas.getPosition().x << ", " << myCanvas.getPosition().y << ", " << myCanvas.getPosition().z << "\n";
-
-
+    
     bool running = true;
     SDL_Event e;
     while (running) {
@@ -23,9 +25,9 @@ int main(int argc, char **argv)
             
         }
         glClear(GL_COLOR_BUFFER_BIT);
-
+        
     }
-
+    
     myCanvas.~window();
     return 0;
 }

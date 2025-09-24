@@ -1,12 +1,28 @@
 all: main
 
-main: main.cpp utils/Window.o Scene/Scene.o
-	g++ main.cpp utils/Window.o Scene/Scene.o -o main `sdl2-config --cflags --libs` -lGLEW -lGL
+main: main.cpp build/Vec4.o build/Window.o build/Ray.o build/Sphere.o build/Scene.o
+	mkdir -p build
+	g++ main.cpp build/Vec4.o build/Window.o build/Ray.o build/Sphere.o build/Scene.o -o main `sdl2-config --cflags --libs` -lGLEW -lGL
 
-utils/Window.o: utils/Window.cpp headers/utils.h
-	g++ -c utils/Window.cpp -o utils/Window.o `sdl2-config --cflags`
-Scene/Scene.o: Scene/Scene.cpp headers/Scene.h
-	g++ -c Scene/Scene.cpp -o Scene/Scene.o `sdl2-config --cflags` -lGLEW -lGL
+build/Vec4.o: utils/Vec4.cpp headers/utils.h
+	mkdir -p build
+	g++ -c utils/Vec4.cpp -o build/Vec4.o `sdl2-config --cflags`
+
+build/Window.o: utils/Window.cpp headers/utils.h
+	mkdir -p build
+	g++ -c utils/Window.cpp -o build/Window.o `sdl2-config --cflags`
+
+build/Ray.o: Scene/Ray.cpp headers/Ray.h
+	mkdir -p build
+	g++ -c Scene/Ray.cpp -o build/Ray.o `sdl2-config --cflags`
+
+build/Sphere.o: Scene/Sphere.cpp headers/Sphere.h
+	mkdir -p build
+	g++ -c Scene/Sphere.cpp -o build/Sphere.o `sdl2-config --cflags`
+
+build/Scene.o: Scene/Scene.cpp headers/Scene.h
+	mkdir -p build
+	g++ -c Scene/Scene.cpp -o build/Scene.o `sdl2-config --cflags` -lGLEW -lGL
 
 clean:
-	rm -f main utils/*.o
+	rm -rf build main

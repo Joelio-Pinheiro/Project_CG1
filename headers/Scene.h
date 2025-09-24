@@ -3,17 +3,19 @@
 #include <SDL.h>
 #include <GL/glew.h>
 #include "../headers/utils.h"
-
+#include "../headers/Sphere.h"
+#include <vector>
 
 class Scene {
     private:
-        int WIDTH;
-        int HEIGHT;
+        float WIDTH;
+        float HEIGHT;
         float DWindow;
         utils::window *window;
-        utils::Position observerPosition;
+        utils::Vec4 observerPosition;
+        std::vector<Sphere*> spheres;
     public:
-        Scene(int width, int height, float DWindow, utils::window *window);
+        Scene(float width, float height, float DWindow, utils::window *window);
         void setObserverPosition(float x, float y, float z);
 };
 
