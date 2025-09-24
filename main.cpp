@@ -7,27 +7,25 @@
 
 
 int main(int argc, char **argv)
-{
-    utils::window myCanvas(800.0f, 600.0f);
-    Scene myScene(800.0f, 600.0f, -5.0f, &myCanvas);
-    
-    std::cout << "Window dimensions: " << myCanvas.getPosition().x << ", " << myCanvas.getPosition().y << ", " << myCanvas.getPosition().z << "\n";
-    
+{   
+    float widthPixels = 800.0f;
+    float heightPixels = 600.0f;
+    utils::window myWindow(widthPixels, heightPixels);
+    Scene myScene(160.0f, 120.0f, -6.0f, widthPixels, heightPixels, &myWindow);
+
+
     bool running = true;
     SDL_Event e;
     while (running) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) running = false;
             if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) running = false;
-            if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_g) {
-                std::cout << "G key released\n";
-            }
             
         }
-        glClear(GL_COLOR_BUFFER_BIT);
+        myScene.render();
         
     }
-    
-    myCanvas.~window();
+
+    myWindow.~window();
     return 0;
 }

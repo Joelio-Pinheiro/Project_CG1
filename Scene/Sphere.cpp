@@ -4,13 +4,13 @@
 Sphere::Sphere(float radius, float x, float y, float z) {
     this->radius = radius;
     this->setCenter(x, y, z);
-
-
-    this->colors = {255.0f, 0.0f, 0.0f}; // Default color red (RGB)
 }
 
 void Sphere::setCenter(float x, float y, float z) {
     this->center = utils::Vec4::Point(x, y, z);
+}
+void Sphere::setcolors(int r, int g, int b) {
+    this->colors = {static_cast<Uint8>(r), static_cast<Uint8>(g), static_cast<Uint8>(b), 255};
 }
 
 utils::Vec4 Sphere::getCenter() {

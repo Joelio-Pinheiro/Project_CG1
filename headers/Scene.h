@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include "../headers/utils.h"
 #include "../headers/Sphere.h"
+#include "../headers/Ray.h"
 #include <vector>
 
 class Scene {
@@ -11,12 +12,18 @@ class Scene {
         float WIDTH;
         float HEIGHT;
         float DWindow;
+        int nRow;
+        int nCol;
         utils::window *window;
         utils::Vec4 observerPosition;
         std::vector<Sphere*> spheres;
     public:
-        Scene(float width, float height, float DWindow, utils::window *window);
+        Scene(float width, float height, float DWindow, int nRow, int nCol, utils::window *window);
         void setObserverPosition(float x, float y, float z);
+        void render();
+    private:
+        std::vector<SDL_Color> traceRays();
+        void drawCanvas(const std::vector<SDL_Color>& canvas);
 };
 
 #endif // SCENE_H

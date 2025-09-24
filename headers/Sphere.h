@@ -17,11 +17,13 @@ class Sphere {
     private:
         float radius;
         utils::Vec4 center;
-        std::vector<float> colors; // Cores RGB da esfera
+        SDL_Color colors; // Cores RGB da esfera
 
     public:
         Sphere(float radius, float x, float y, float z);
         void setCenter(float x, float y, float z);
+        void setcolors(int r, int g, int b);
+        SDL_Color getColors() { return this->colors; };
         utils::Vec4 getCenter();
         float getRadius();
         HitInfo intersects(const Ray& ray);

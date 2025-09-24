@@ -7,8 +7,7 @@ namespace utils
 {
     window::window(float width, float height)
     {
-         if (SDL_Init(SDL_INIT_VIDEO) != 0)
-        {
+         if (SDL_Init(SDL_INIT_VIDEO) != 0) {
             std::cerr << "SDL_Init error: " << SDL_GetError() << "\n";
             return;
         }
@@ -18,10 +17,11 @@ namespace utils
 
         // criar janela
         this->w = SDL_CreateWindow(
-            "SDL2 Window + OpenGL",
+            "SDL2 Window",
             SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
             this->WWindow, this->HWindow,
-            SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+            SDL_WINDOW_SHOWN);
+        this->renderer = SDL_CreateRenderer(this->w, -1, SDL_RENDERER_ACCELERATED);
 
         if (!this->w) {
             std::cerr << "SDL_CreateWindow error: " << SDL_GetError() << "\n";

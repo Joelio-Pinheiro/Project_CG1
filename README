@@ -1,0 +1,14 @@
+# CG1 Project
+
+## Como Rodar
+
+1. Certifique-se de ter as bibliotecas necessárias instaladas:
+   - SDL2
+   - GLEW
+   - OpenGL
+
+2. No terminal, dentro da pasta do projeto, basta rodar:
+
+```bash
+make
+./main

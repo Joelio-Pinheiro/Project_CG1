@@ -29,6 +29,7 @@ namespace utils {
             float HWindow;
             Vec4 position;
             SDL_Window *w;
+            SDL_Renderer *renderer;
         public:
             window(float width, float height);
             ~window();
@@ -37,6 +38,7 @@ namespace utils {
             float getHeight() { return this->HWindow; }
             Vec4 getPosition();
             void setPosition(float x, float y, float z) { this->position = Vec4::Point(x, y, z); }
+            SDL_Renderer* getRenderer() { return this->renderer; }
         };
 }
 #endif 

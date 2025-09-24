@@ -5,7 +5,7 @@
 
 Ray::Ray(const utils::Vec4& origin, const utils::Vec4& direction) {
     this->originPoint = origin;
-    this->dirVector = direction.normalize(); // Ensure the direction is a unit vector
+    this->dirVector = direction.normalize(); // Garante que o vetor direção é normalizado
 }
 
 utils::Vec4 Ray::getOrigin() const {
