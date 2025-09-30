@@ -3,7 +3,8 @@
 #include <SDL.h>
 #include <GL/glew.h>  
 #include <iostream>
-#include <cmath> 
+#include <cmath>
+#include <SDL.h>
 
 namespace utils {
     struct Vec4 {
@@ -16,8 +17,11 @@ namespace utils {
         Vec4 operator-(const Vec4& v) const;
         Vec4 operator*(float k) const;
         Vec4 operator/(float k) const;
+        Vec4 AtSign(const Vec4& v) const;
+        Vec4 RGBConvert(SDL_Color color) const;
         float dot(const Vec4& v) const;
         Vec4 cross(const Vec4& v) const;
+        static float clamp(float v, float min, float max);
         float length() const;
         Vec4 normalize() const;
         void print() const;

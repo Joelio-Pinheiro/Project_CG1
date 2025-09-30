@@ -5,6 +5,7 @@
 #include "../headers/utils.h"
 #include "../headers/Sphere.h"
 #include "../headers/Ray.h"
+#include "../headers/Light.h"
 #include <vector>
 
 class Scene {
@@ -17,6 +18,7 @@ class Scene {
         utils::window *window;
         utils::Vec4 observerPosition;
         std::vector<Sphere*> spheres;
+        std::vector<Light*> lights;
     public:
         Scene(float width, float height, float DWindow, int nRow, int nCol, utils::window *window);
         void setObserverPosition(float x, float y, float z);

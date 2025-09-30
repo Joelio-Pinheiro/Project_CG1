@@ -8,10 +8,10 @@
 
 int main(int argc, char **argv)
 {   
-    float widthPixels = 800.0f;
+    float widthPixels = 600.0f;
     float heightPixels = 600.0f;
     utils::window myWindow(widthPixels, heightPixels);
-    Scene myScene(160.0f, 120.0f, -6.0f, widthPixels, heightPixels, &myWindow);
+    Scene myScene(20.0f, 20.0f, -20.0f, widthPixels, heightPixels, &myWindow);
 
 
     bool running = true;

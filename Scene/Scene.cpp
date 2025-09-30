@@ -2,6 +2,7 @@
 #include "../headers/Sphere.h"
 #include "../headers/utils.h"
 #include "../headers/Ray.h"
+#include "../headers/Light.h"
 #include <SDL.h>
 #include <GL/glew.h>
 
@@ -12,16 +13,24 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     this->DWindow = DWindow;
     this->nRow = nRow;
     this->nCol = nCol;
-    this->setObserverPosition(0.0f, 0.0f, 0.0f);
+    this->setObserverPosition(0.0f, 0.0f, 200.0f);
 
     this->window->setPosition(0, 0, this->DWindow); 
 
     // Criar esferas na cena
     float radius = 2.9f;
     float Zcenter = this->DWindow + radius; // Assumindo que DWindow é negativo
-    Sphere *sphere1 = new Sphere(radius, 0.0f, 0.0f, Zcenter);
+    Sphere *sphere1 = new Sphere(radius, -4.0f, 0.0f, 0.0f);
     sphere1->setcolors(255, 0, 0); // Red color
     this->spheres.push_back(sphere1);
+
+    Sphere *sphere2 = new Sphere(radius, 4.0f, 0.5f, 0.0f);
+    sphere2->setcolors(0, 255, 0); 
+    this->spheres.push_back(sphere2);
+
+    Light *light1 = new Light(50.0f, 0.0f, 0.0f, utils::Vec4::Vector(1.0f, 1.0f, 1.0f));
+    this->lights.push_back(light1);
+
 }
 
 void Scene::setObserverPosition(float x, float y, float z) {
@@ -59,7 +68,12 @@ std::vector<SDL_Color> Scene::traceRays() {
                 HitInfo hitInfo = sphere->intersects(ray);
                 if (hitInfo.hit && hitInfo.t < closestHit.t) {
                     closestHit = hitInfo;
-                    hitColor = sphere->getColors();
+                    // hitColor = sphere->getColors();
+                    utils::Vec4 totalLight = utils::Vec4::Point(0, 0, 0);
+                    for(Light* light : this->lights) {
+                        totalLight = totalLight + light->ComputeLighting(hitInfo, sphere, ray.getDirection());
+                    }
+                    hitColor = {static_cast<Uint8>(totalLight.x * 255), static_cast<Uint8>(totalLight.y * 255), static_cast<Uint8>(totalLight.z * 255), 255};
                 }
             }
             if (closestHit.hit) {

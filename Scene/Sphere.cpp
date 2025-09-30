@@ -4,6 +4,7 @@
 Sphere::Sphere(float radius, float x, float y, float z) {
     this->radius = radius;
     this->setCenter(x, y, z);
+    this->specular = utils::Vec4::Point(1.0f, 1.0f, 1.0f);
 }
 
 void Sphere::setCenter(float x, float y, float z) {
@@ -13,12 +14,17 @@ void Sphere::setcolors(int r, int g, int b) {
     this->colors = {static_cast<Uint8>(r), static_cast<Uint8>(g), static_cast<Uint8>(b), 255};
 }
 
-utils::Vec4 Sphere::getCenter() {
+utils::Vec4 Sphere::getCenter() const {
     return center;
 }
 
 float Sphere::getRadius() {
     return radius;
+}
+utils::Vec4 Sphere::getColorsVec4() const {
+    utils::Vec4 colors;
+    colors = colors.RGBConvert(this->colors);
+    return colors;
 }
 
 HitInfo Sphere::intersects(const Ray& ray) {
