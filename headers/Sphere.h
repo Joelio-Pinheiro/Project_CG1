@@ -17,19 +17,19 @@ class Sphere {
     private:
         float radius;
         utils::Vec4 center;
-        SDL_Color colors; // Cores RGB da esfera
-        utils::Vec4 specular;
+        utils::RGB diffuse = {1.0f, 1.0f, 1.0f}; // Cores RGB da esfera
+        utils::RGB specular = {1.0f, 1.0f, 1.0f};
 
     public:
         Sphere(float radius, float x, float y, float z);
         void setCenter(float x, float y, float z);
-        void setcolors(int r, int g, int b);
-        SDL_Color getColors() { return this->colors; };
-        utils::Vec4 getSpecular() const { return specular; }
+        void setDiffuse(float r, float g, float b);
+        void setSpecular(float r, float g, float b);
+        utils::RGB getDiffuse() const { return this->diffuse; };
+        utils::RGB getSpecular() const { return this->specular; }
         utils::Vec4 getCenter() const;
         float getRadius();
-        HitInfo intersects(const Ray& ray);
-        utils::Vec4 getColorsVec4() const;
+        HitInfo intersects(const Ray& ray) const;
 };
 
 #endif // BALL_H

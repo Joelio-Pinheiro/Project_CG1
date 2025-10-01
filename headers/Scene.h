@@ -17,6 +17,7 @@ class Scene {
         int nCol;
         utils::window *window;
         utils::Vec4 observerPosition;
+        utils::RGB ambientLight = {0.1f, 0.1f, 0.1f};
         std::vector<Sphere*> spheres;
         std::vector<Light*> lights;
     public:

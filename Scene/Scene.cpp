@@ -16,21 +16,25 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     this->setObserverPosition(0.0f, 0.0f, 200.0f);
 
     this->window->setPosition(0, 0, this->DWindow); 
+    this->ambientLight = utils::RGB(0.2f, 0.2f, 0.2f);
 
     // Criar esferas na cena
     float radius = 2.9f;
     float Zcenter = this->DWindow + radius; // Assumindo que DWindow é negativo
     Sphere *sphere1 = new Sphere(radius, -4.0f, 0.0f, 0.0f);
-    sphere1->setcolors(255, 0, 0); // Red color
+    sphere1->setDiffuse(1.0f, 0.0f, 0.0f); // Red color
+    sphere1->setSpecular(1.0f, 1.0f, 1.0f);
     this->spheres.push_back(sphere1);
 
-    Sphere *sphere2 = new Sphere(radius, 4.0f, 0.5f, 0.0f);
-    sphere2->setcolors(0, 255, 0); 
+    Sphere *sphere2 = new Sphere(radius, 6.0f, -1.5f, 0.0f);
+    sphere2->setDiffuse(0.0f, 1.0f, 0.0f);
+    sphere2->setSpecular(1.0f, 1.0f, 1.0f);
     this->spheres.push_back(sphere2);
 
-    Light *light1 = new Light(50.0f, 0.0f, 0.0f, utils::Vec4::Vector(1.0f, 1.0f, 1.0f));
+    Light *light1 = new Light(50.0f, 10.0f, 0.0f, utils::RGB(1.0f, 1.0f, 1.0f), this->ambientLight);
+    Light *light2 = new Light(-40.0f, 15.0f, 0.0f, utils::RGB(1.0f, 1.0f, 1.0f), this->ambientLight);
     this->lights.push_back(light1);
-
+    this->lights.push_back(light2);
 }
 
 void Scene::setObserverPosition(float x, float y, float z) {
@@ -43,9 +47,9 @@ std::vector<SDL_Color> Scene::traceRays() {
     float Dx = this->WIDTH / this->nCol;
     float Dy = this->HEIGHT / this->nRow;
 
-    SDL_Color bgColor  = {100, 100, 100, 255};
+    utils::RGB bgColor  = {0.1f, 0.1f, 0.1f};
 
-    std::vector<SDL_Color> canvas(this->nRow * this->nCol, bgColor); // armazena todos os pixels com a cor de fundo
+    std::vector<SDL_Color> canvas(this->nRow * this->nCol, bgColor.toSDLColor()); // armazena todos os pixels com a cor de fundo
 
     float Z = this->DWindow; // Z coordenada da janela
     for (int l = 0; l < this->nRow; l++) {
@@ -57,29 +61,29 @@ std::vector<SDL_Color> Scene::traceRays() {
             utils::Vec4 dir   = (pixel - this->observerPosition);
             Ray ray(this->observerPosition, dir);
 
-            SDL_Color pixelColor = bgColor;
+            utils::RGB pixelColor = bgColor;
 
             HitInfo closestHit;
             closestHit.hit = false;
             closestHit.t = std::numeric_limits<float>::max();
-            SDL_Color hitColor = bgColor;
+            utils::RGB hitColor = bgColor;
             
             for (Sphere* sphere : this->spheres) {
                 HitInfo hitInfo = sphere->intersects(ray);
                 if (hitInfo.hit && hitInfo.t < closestHit.t) {
                     closestHit = hitInfo;
-                    // hitColor = sphere->getColors();
-                    utils::Vec4 totalLight = utils::Vec4::Point(0, 0, 0);
+
+                    utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
                     for(Light* light : this->lights) {
-                        totalLight = totalLight + light->ComputeLighting(hitInfo, sphere, ray.getDirection());
+                        totalLight = totalLight + light->ComputeLighting(hitInfo, sphere, &this->spheres, ray.getDirection());
                     }
-                    hitColor = {static_cast<Uint8>(totalLight.x * 255), static_cast<Uint8>(totalLight.y * 255), static_cast<Uint8>(totalLight.z * 255), 255};
+                    hitColor = totalLight;
                 }
             }
             if (closestHit.hit) {
                 pixelColor = hitColor;
             }
-            canvas[l * this->nCol + c] = pixelColor;
+            canvas[l * this->nCol + c] = pixelColor.toSDLColor();
         }
     }
 

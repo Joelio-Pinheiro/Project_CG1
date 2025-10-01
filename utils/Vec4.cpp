@@ -32,20 +32,6 @@ namespace utils {
             return Vec4(x * k, y * k, z * k, w * k);
         }
 
-        float Vec4::clamp(float v, float min, float max){
-            if (v < min) return min;
-            if (v > max) return max;
-            return v;
-        }
-
-        // Multiplicação de rgb para vetores
-        Vec4 Vec4::AtSign(const Vec4& v) const {
-            return Vec4(x * v.x, y * v.y, z * v.z, w * v.w);
-        }
-        Vec4 Vec4::RGBConvert(SDL_Color color) const {
-            return Vec4(color.r, color.g, color.b);
-        }
-
         // Divisão por escalar
         Vec4 Vec4::operator/(float k) const {
             return Vec4(x / k, y / k, z / k, w / k);

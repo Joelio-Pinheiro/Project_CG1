@@ -17,14 +17,23 @@ namespace utils {
         Vec4 operator-(const Vec4& v) const;
         Vec4 operator*(float k) const;
         Vec4 operator/(float k) const;
-        Vec4 AtSign(const Vec4& v) const;
-        Vec4 RGBConvert(SDL_Color color) const;
         float dot(const Vec4& v) const;
         Vec4 cross(const Vec4& v) const;
-        static float clamp(float v, float min, float max);
         float length() const;
         Vec4 normalize() const;
         void print() const;
+    };
+
+    struct RGB {
+        float r, g, b;
+
+        static float clamp(float v, float min, float max);
+        RGB(float r=0, float g=0, float b=0);
+        RGB operator+(const RGB &other) const;
+        RGB operator*(float k) const;
+        SDL_Color toSDLColor() const;
+        Vec4 toVec4() const;
+        RGB AtSign(const RGB &other) const;
     };
 
     class window {
