@@ -1,5 +1,6 @@
 #include "../headers/Scene.h"
 #include "../headers/Sphere.h"
+#include "../headers/Flat.h"
 #include "../headers/utils.h"
 #include "../headers/Ray.h"
 #include "../headers/Light.h"
@@ -30,6 +31,11 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     sphere2->setDiffuse(0.0f, 1.0f, 0.0f);
     sphere2->setSpecular(1.0f, 1.0f, 1.0f);
     this->spheres.push_back(sphere2);
+
+    Flat *floor = new Flat(utils::Vec4::Point(0.0f, -3.0f, 0.0f), utils::Vec4::Vector(0.0f, 1.0f, 0.0f));
+    floor->setDiffuse(0.5f, 0.5f, 0.5f);
+    floor->setSpecular(1.0f, 1.0f, 1.0f);
+    this->flats.push_back(floor);
 
     Light *light1 = new Light(50.0f, 10.0f, 0.0f, utils::RGB(1.0f, 1.0f, 1.0f), this->ambientLight);
     Light *light2 = new Light(-40.0f, 15.0f, 0.0f, utils::RGB(1.0f, 1.0f, 1.0f), this->ambientLight);
@@ -78,6 +84,19 @@ std::vector<SDL_Color> Scene::traceRays() {
                         totalLight = totalLight + light->ComputeLighting(hitInfo, sphere, &this->spheres, ray.getDirection());
                     }
                     hitColor = totalLight;
+                }
+            }
+            for (Flat* flat : this->flats) {
+                HitInfo hitInfo = flat->intersects(ray);
+                if (hitInfo.hit && hitInfo.t < closestHit.t) {
+                    closestHit = hitInfo;
+
+                    //utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
+                    // for(Light* light : this->lights) {
+                    //     // Note: Flat does not have specular component in this example
+                    //     //totalLight = totalLight + light->ComputeLighting(hitInfo, nullptr, &this->spheres, ray.getDirection());
+                    // }
+                    hitColor = flat->getDiffuse();
                 }
             }
             if (closestHit.hit) {

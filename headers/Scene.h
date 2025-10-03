@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include "../headers/utils.h"
 #include "../headers/Sphere.h"
+#include "../headers/Flat.h"
 #include "../headers/Ray.h"
 #include "../headers/Light.h"
 #include <vector>
@@ -19,6 +20,7 @@ class Scene {
         utils::Vec4 observerPosition;
         utils::RGB ambientLight = {0.1f, 0.1f, 0.1f};
         std::vector<Sphere*> spheres;
+        std::vector<Flat*> flats;
         std::vector<Light*> lights;
     public:
         Scene(float width, float height, float DWindow, int nRow, int nCol, utils::window *window);

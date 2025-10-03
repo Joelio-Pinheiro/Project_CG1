@@ -1,10 +1,9 @@
-#ifndef BALL_H
-#define BALL_H
+#ifndef SPHERE_H
+#define SPHERE_H
 #include <SDL.h>
 #include <GL/glew.h>
 #include "../headers/utils.h"
 #include "../headers/Ray.h"
-#include <vector>
 
 struct HitInfo {
     bool hit; // Se ocorreu a interseção

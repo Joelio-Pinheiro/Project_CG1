@@ -1,8 +1,8 @@
 all: main
 
-main: main.cpp build/Vec4.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Scene.o build/Light.o
+main: main.cpp build/Vec4.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Flat.o build/Scene.o build/Light.o
 	mkdir -p build
-	g++ main.cpp build/Vec4.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Scene.o build/Light.o -o main `sdl2-config --cflags --libs` -lGLEW -lGL
+	g++ main.cpp build/Vec4.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Flat.o build/Scene.o build/Light.o -o main `sdl2-config --cflags --libs` -lGLEW -lGL
 
 build/Vec4.o: utils/Vec4.cpp headers/utils.h
 	mkdir -p build
@@ -22,6 +22,9 @@ build/Ray.o: Scene/Ray.cpp headers/Ray.h
 build/Sphere.o: Scene/Sphere.cpp headers/Sphere.h
 	mkdir -p build
 	g++ -c Scene/Sphere.cpp -o build/Sphere.o `sdl2-config --cflags`
+build/Flat.o: Scene/Flat.cpp headers/Flat.h
+	mkdir -p build
+	g++ -c Scene/Flat.cpp -o build/Flat.o `sdl2-config --cflags` 
 
 build/Scene.o: Scene/Scene.cpp headers/Scene.h
 	mkdir -p build
