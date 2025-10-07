@@ -55,6 +55,8 @@ HitInfo Sphere::intersects(const Ray& ray) const{
         t = t2;
     } 
 
+    t -= 0.001f;
+
     if (t > 0) {
         info.hit = true;
         info.t = t;

@@ -27,8 +27,10 @@ class Flat {
         void setNormal(float x, float y, float z);
         void setDiffuse(float r, float g, float b);
         void setSpecular(float r, float g, float b);
+        void setShininess(float shininess) { this->shininess = shininess; }
         utils::RGB getDiffuse() const { return this->diffuse; };
-        utils::RGB getSpecular() const { return this->specular; }
+        utils::RGB getSpecular() const { return this->specular; };
+        float getShininess() const { return this->shininess; };
         utils::Vec4 getPoint() const { return this->point; };
         utils::Vec4 getNormal() const { return this->normal; };
         HitInfo intersects(const Ray& ray) const;

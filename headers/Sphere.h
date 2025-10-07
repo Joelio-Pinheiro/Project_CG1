@@ -18,6 +18,7 @@ class Sphere {
         utils::Vec4 center;
         utils::RGB diffuse = {1.0f, 1.0f, 1.0f}; // Cores RGB da esfera
         utils::RGB specular = {1.0f, 1.0f, 1.0f};
+        float shininess = 10.0f;
 
     public:
         Sphere(float radius, float x, float y, float z);
@@ -25,7 +26,8 @@ class Sphere {
         void setDiffuse(float r, float g, float b);
         void setSpecular(float r, float g, float b);
         utils::RGB getDiffuse() const { return this->diffuse; };
-        utils::RGB getSpecular() const { return this->specular; }
+        utils::RGB getSpecular() const { return this->specular; };
+        float getShininess() const { return this->shininess; };
         utils::Vec4 getCenter() const;
         float getRadius();
         HitInfo intersects(const Ray& ray) const;

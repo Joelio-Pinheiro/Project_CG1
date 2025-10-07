@@ -14,33 +14,33 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     this->DWindow = DWindow;
     this->nRow = nRow;
     this->nCol = nCol;
-    this->setObserverPosition(0.0f, 0.0f, 200.0f);
+    this->setObserverPosition(0.0f, 0.0f, 0.0f);
 
     this->window->setPosition(0, 0, this->DWindow); 
-    this->ambientLight = utils::RGB(0.2f, 0.2f, 0.2f);
+    this->ambientLight = utils::RGB(0.3f, 0.3f, 0.3f);
 
     // Criar esferas na cena
-    float radius = 2.9f;
+    float radius = 40.0f;
     float Zcenter = this->DWindow + radius; // Assumindo que DWindow é negativo
-    Sphere *sphere1 = new Sphere(radius, -4.0f, 0.0f, 0.0f);
-    sphere1->setDiffuse(1.0f, 0.0f, 0.0f); // Red color
-    sphere1->setSpecular(1.0f, 1.0f, 1.0f);
+    Sphere *sphere1 = new Sphere(radius, 0.0f, 0.0f, -100.0f);
+    sphere1->setDiffuse(0.7f, 0.2f, 0.2f); 
+    sphere1->setSpecular(0.7f, 0.2f, 0.2f);
     this->spheres.push_back(sphere1);
 
-    Sphere *sphere2 = new Sphere(radius, 6.0f, -1.5f, 0.0f);
-    sphere2->setDiffuse(0.0f, 1.0f, 0.0f);
-    sphere2->setSpecular(1.0f, 1.0f, 1.0f);
-    this->spheres.push_back(sphere2);
-
-    Flat *floor = new Flat(utils::Vec4::Point(0.0f, -3.0f, 0.0f), utils::Vec4::Vector(0.0f, 1.0f, 0.0f));
-    floor->setDiffuse(0.5f, 0.5f, 0.5f);
-    floor->setSpecular(1.0f, 1.0f, 1.0f);
+    Flat *floor = new Flat(utils::Vec4::Point(0.0f, -radius, 0.0f), utils::Vec4::Vector(0.0f, 1.0f, 0.0f));
+    floor->setDiffuse(0.2f, 0.7f, 0.2f);
+    floor->setSpecular(0.0f, 0.0f, 0.0f);
+    floor->setShininess(1.0f);
     this->flats.push_back(floor);
 
-    Light *light1 = new Light(50.0f, 10.0f, 0.0f, utils::RGB(1.0f, 1.0f, 1.0f), this->ambientLight);
-    Light *light2 = new Light(-40.0f, 15.0f, 0.0f, utils::RGB(1.0f, 1.0f, 1.0f), this->ambientLight);
+    Flat *back = new Flat(utils::Vec4::Point(0.0f, 0.0f, -200.0f), utils::Vec4::Vector(0.0f, 0.0f, 1.0f));
+    back->setDiffuse(0.3f, 0.3f, 0.7f);
+    back->setSpecular(0.0f, 0.0f, 0.0f);
+    back->setShininess(1.0f);
+    this->flats.push_back(back);
+    
+    Light *light1 = new Light(0.0f, 60.0f, -30.0f, utils::RGB(0.7f, 0.7f, 0.7f), this->ambientLight);
     this->lights.push_back(light1);
-    this->lights.push_back(light2);
 }
 
 void Scene::setObserverPosition(float x, float y, float z) {
@@ -81,7 +81,7 @@ std::vector<SDL_Color> Scene::traceRays() {
 
                     utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
                     for(Light* light : this->lights) {
-                        totalLight = totalLight + light->ComputeLighting(hitInfo, sphere, &this->spheres, ray.getDirection());
+                        totalLight = totalLight + light->ComputeLighting(hitInfo, sphere, &this->spheres, &this->flats, ray.getDirection());
                     }
                     hitColor = totalLight;
                 }
@@ -91,12 +91,11 @@ std::vector<SDL_Color> Scene::traceRays() {
                 if (hitInfo.hit && hitInfo.t < closestHit.t) {
                     closestHit = hitInfo;
 
-                    //utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
-                    // for(Light* light : this->lights) {
-                    //     // Note: Flat does not have specular component in this example
-                    //     //totalLight = totalLight + light->ComputeLighting(hitInfo, nullptr, &this->spheres, ray.getDirection());
-                    // }
-                    hitColor = flat->getDiffuse();
+                    utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
+                    for(Light* light : this->lights) {
+                        totalLight = totalLight + light->ComputeLighting(hitInfo, flat, &this->spheres, &this->flats, ray.getDirection());
+                    }
+                    hitColor = totalLight;
                 }
             }
             if (closestHit.hit) {
