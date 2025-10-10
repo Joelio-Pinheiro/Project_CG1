@@ -25,6 +25,12 @@ class Scene {
     public:
         Scene(float width, float height, float DWindow, int nRow, int nCol, utils::window *window);
         void setObserverPosition(float x, float y, float z);
+        void incrementObserverZ(float z) { this->observerPosition.z += z; }
+        void incrementObserverX(float x) { this->observerPosition.x += x; }
+        void incrementObserverY(float y) { this->observerPosition.y += y; }
+        void decrementObserverZ(float z) { this->observerPosition.z -= z; }
+        void decrementObserverX(float x) { this->observerPosition.x -= x; }
+        void decrementObserverY(float y) { this->observerPosition.y -= y; }
         void render();
     private:
         std::vector<SDL_Color> traceRays();
