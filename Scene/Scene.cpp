@@ -17,15 +17,21 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     this->setObserverPosition(0.0f, 0.0f, 0.0f);
 
     this->window->setPosition(0, 0, this->DWindow); 
-    this->ambientLight = utils::RGB(0.3f, 0.3f, 0.3f);
+    this->setAmbientLight(0.3f, 0.3f, 0.3f);
 
     // Criar esferas na cena
     float radius = 40.0f;
     float Zcenter = this->DWindow + radius; // Assumindo que DWindow é negativo
-    Sphere *sphere1 = new Sphere(radius, 0.0f, 0.0f, -100.0f);
-    sphere1->setDiffuse(0.7f, 0.2f, 0.2f); 
-    sphere1->setSpecular(0.7f, 0.2f, 0.2f);
-    this->spheres.push_back(sphere1);
+    // Sphere *sphere1 = new Sphere(radius, 0.0f, 0.0f, -100.0f);
+    Cylinder *cylinder1 = new Cylinder(13.3f, radius*3.0f, utils::Vec4::Point(0.0f, 0.0f, -100.0f), utils::Vec4::Vector(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), true);
+    cylinder1->setDiffuse(0.7f, 0.2f, 0.2f);
+    cylinder1->setSpecular(0.7f, 0.2f, 0.2f);
+    this->cylinders.push_back(cylinder1);
+
+    Cylinder *cylinder2 = new Cylinder(13.3f, radius*1.5f, utils::Vec4::Point(0.0f, 0.0f, -100.0f), utils::Vec4::Vector(0.0f, 0.0f, 1.0f), true);
+    cylinder2->setDiffuse(0.2f, 0.2f, 0.7f);
+    cylinder2->setSpecular(0.2f, 0.2f, 0.7f);
+    // this->cylinders.push_back(cylinder2);
 
     Flat *floor = new Flat(utils::Vec4::Point(0.0f, -radius, 0.0f), utils::Vec4::Vector(0.0f, 1.0f, 0.0f));
     floor->setDiffuse(0.2f, 0.7f, 0.2f);
@@ -39,8 +45,9 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     back->setShininess(1.0f);
     this->flats.push_back(back);
     
-    Light *light1 = new Light(0.0f, 60.0f, -30.0f, utils::RGB(0.7f, 0.7f, 0.7f), this->ambientLight);
+    Light *light1 = new Light(0.0f, 60.0f, -30.0f, utils::RGB(0.7f, 0.7f, 0.7f), this);
     this->lights.push_back(light1);
+
 }
 
 void Scene::setObserverPosition(float x, float y, float z) {
@@ -69,31 +76,43 @@ std::vector<SDL_Color> Scene::traceRays() {
 
             utils::RGB pixelColor = bgColor;
 
-            HitInfo closestHit;
+            utils::HitInfo closestHit;
             closestHit.hit = false;
             closestHit.t = std::numeric_limits<float>::max();
             utils::RGB hitColor = bgColor;
             
             for (Sphere* sphere : this->spheres) {
-                HitInfo hitInfo = sphere->intersects(ray);
+                utils::HitInfo hitInfo = sphere->intersects(ray);
                 if (hitInfo.hit && hitInfo.t < closestHit.t) {
                     closestHit = hitInfo;
 
                     utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
                     for(Light* light : this->lights) {
-                        totalLight = totalLight + light->ComputeLighting(hitInfo, sphere, &this->spheres, &this->flats, ray.getDirection());
+                        totalLight = totalLight + light->ComputeLighting(hitInfo, sphere->getMaterial(), ray.getDirection());
+                    }
+                    hitColor = totalLight;
+                }
+            }
+            for (Cylinder* cylinder : this->cylinders) {
+                utils::HitInfo hitInfo = cylinder->intersects(ray);
+                if (hitInfo.hit && hitInfo.t < closestHit.t) {
+                    closestHit = hitInfo;
+
+                    utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
+                    for(Light* light : this->lights) {
+                        totalLight = totalLight + light->ComputeLighting(hitInfo, cylinder->getMaterial(), ray.getDirection());
                     }
                     hitColor = totalLight;
                 }
             }
             for (Flat* flat : this->flats) {
-                HitInfo hitInfo = flat->intersects(ray);
+                utils::HitInfo hitInfo = flat->intersects(ray);
                 if (hitInfo.hit && hitInfo.t < closestHit.t) {
                     closestHit = hitInfo;
 
                     utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
                     for(Light* light : this->lights) {
-                        totalLight = totalLight + light->ComputeLighting(hitInfo, flat, &this->spheres, &this->flats, ray.getDirection());
+                        totalLight = totalLight + light->ComputeLighting(hitInfo, flat->getMaterial(), ray.getDirection());
                     }
                     hitColor = totalLight;
                 }

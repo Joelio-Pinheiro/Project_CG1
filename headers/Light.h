@@ -4,20 +4,24 @@
 #include "../headers/Sphere.h"
 #include "../headers/Flat.h"
 #include "../headers/Ray.h"
+#include "../headers/Scene.h"
 #include <SDL.h>
 #include <vector>
 
+
+class Scene;
+
 class Light {
     private:
+        Scene* scene;
         utils::Vec4 positionF;
         utils::RGB intensityF;
         utils::RGB ambientLight;
 
     public:
-        Light(float x, float y, float z, utils::RGB intensity, utils::RGB ambient = {0.1f, 0.1f, 0.1f});
-        utils::RGB ComputeLighting(const HitInfo& hitInfo, const Sphere* sphere, const std::vector<Sphere*>* spheres, const std::vector<Flat*>* flats, const utils::Vec4& RayDirection) const;
-        utils::RGB ComputeLighting(const HitInfo& hitInfo, const Flat* flat, const std::vector<Sphere*>* spheres, const std::vector<Flat*>* flats, const utils::Vec4& RayDirection) const;
-        bool Shadow (const HitInfo& hitInfo, const std::vector<Sphere*>* spheres, const std::vector<Flat*>* flats, const utils::Vec4& lightDir) const;
+        Light(float x, float y, float z, utils::RGB intensity, Scene* scene);
+        utils::RGB ComputeLighting(const utils::HitInfo& hitInfo, const utils::Material& material, const utils::Vec4& RayDirection);
+        bool Shadow (const utils::HitInfo& hitInfo, const utils::Vec4& lightDir);
 
         utils::Vec4 getPosition() const { return positionF; }
         utils::RGB getIntensity() const { return intensityF; }

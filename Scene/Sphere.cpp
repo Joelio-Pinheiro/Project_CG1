@@ -11,11 +11,11 @@ void Sphere::setCenter(float x, float y, float z) {
     this->center = utils::Vec4::Point(x, y, z);
 }
 void Sphere::setDiffuse(float r, float g, float b) {
-    this->diffuse = utils::RGB(r, g, b);
+    this->material.setDiffuse(r, g, b);
 }
 
 void Sphere::setSpecular(float r, float g, float b) {
-    this->specular = utils::RGB(r, g, b);
+    this->material.setSpecular(r, g, b);
 }
 
 utils::Vec4 Sphere::getCenter() const {
@@ -26,8 +26,8 @@ float Sphere::getRadius() {
     return radius;
 }
 
-HitInfo Sphere::intersects(const Ray& ray) const{
-    HitInfo info;
+utils::HitInfo Sphere::intersects(const Ray& ray) const{
+    utils::HitInfo info;
     info.hit = false;
 
     utils::Vec4 oc = ray.getOrigin().operator-(center); // (P - C) = w

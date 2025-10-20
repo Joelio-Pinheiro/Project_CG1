@@ -7,9 +7,10 @@
 #include <SDL.h>
 
 namespace utils {
+    
     struct Vec4 {
         float x, y, z, w;
-
+        
         Vec4(float x=0, float y=0, float z=0, float w=0);
         static Vec4 Point(float x, float y, float z);
         static Vec4 Vector(float x, float y, float z);
@@ -23,7 +24,13 @@ namespace utils {
         Vec4 normalize() const;
         void print() const;
     };
-
+    
+    struct HitInfo {
+        bool hit; // Se ocorreu a interseção
+        float t; // Distância ao longo do raio até a interseção
+        utils::Vec4 point; // Ponto de interseção
+        utils::Vec4 normal; // Normal da superfície na interseção
+    };
     struct RGB {
         float r, g, b;
 
@@ -34,6 +41,23 @@ namespace utils {
         SDL_Color toSDLColor() const;
         Vec4 toVec4() const;
         RGB AtSign(const RGB &other) const;
+    };
+
+    struct Material {
+        utils::RGB diffuse;
+        utils::RGB specular;
+        utils::RGB ambient = this->diffuse;
+        float shininess;
+
+        Material() : diffuse(1.0f, 1.0f, 1.0f), specular(1.0f, 1.0f, 1.0f), shininess(10.0f) {}
+        utils::RGB getDiffuse() const { return this->diffuse; }
+        utils::RGB getSpecular() const { return this->specular; }
+        utils::RGB getAmbient() const { return this->ambient; }
+        float getShininess() const { return this->shininess; }
+        void setDiffuse(float r, float g, float b) { this->diffuse = utils::RGB(r, g, b); }
+        void setSpecular(float r, float g, float b) { this->specular = utils::RGB(r, g, b); }
+        void setAmbient(float r, float g, float b) { this->ambient = utils::RGB(r, g, b); }
+        void setShininess(float shininess) { this->shininess = shininess; }
     };
 
     class window {
@@ -53,5 +77,6 @@ namespace utils {
             void setPosition(float x, float y, float z) { this->position = Vec4::Point(x, y, z); }
             SDL_Renderer* getRenderer() { return this->renderer; }
         };
+
 }
 #endif 

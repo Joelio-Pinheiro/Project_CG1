@@ -5,10 +5,12 @@
 #include "../headers/utils.h"
 #include "../headers/Sphere.h"
 #include "../headers/Flat.h"
+#include "../headers/Cylinder.h"
 #include "../headers/Ray.h"
 #include "../headers/Light.h"
 #include <vector>
 
+class Light;
 class Scene {
     private:
         float WIDTH;
@@ -21,16 +23,25 @@ class Scene {
         utils::RGB ambientLight = {0.1f, 0.1f, 0.1f};
         std::vector<Sphere*> spheres;
         std::vector<Flat*> flats;
+        std::vector<Cylinder*> cylinders;
         std::vector<Light*> lights;
     public:
         Scene(float width, float height, float DWindow, int nRow, int nCol, utils::window *window);
         void setObserverPosition(float x, float y, float z);
+
+        void setAmbientLight(float r, float g, float b) { this->ambientLight = utils::RGB(r, g, b); }
+        utils::RGB getAmbientLight() const { return this->ambientLight; }
+        std::vector<Sphere*> getSpheres() const { return this->spheres; }
+        std::vector<Flat*> getFlats() const { return this->flats; }
+        std::vector<Cylinder*> getCylinders() const { return this->cylinders; }
+
         void incrementObserverZ(float z) { this->observerPosition.z += z; }
         void incrementObserverX(float x) { this->observerPosition.x += x; }
         void incrementObserverY(float y) { this->observerPosition.y += y; }
         void decrementObserverZ(float z) { this->observerPosition.z -= z; }
         void decrementObserverX(float x) { this->observerPosition.x -= x; }
         void decrementObserverY(float y) { this->observerPosition.y -= y; }
+        utils::Vec4 getObserverPosition() const { return this->observerPosition; }
         void render();
     private:
         std::vector<SDL_Color> traceRays();

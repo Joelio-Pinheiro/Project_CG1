@@ -19,5 +19,5 @@ utils::Vec4 Ray::getDirection() const {
 // P(t) = P0 + t * dr
 utils::Vec4 Ray::position(float t) const {
 
-    return originPoint.operator+(dirVector.operator*(t));   
+    return originPoint + (dirVector * t);
 }

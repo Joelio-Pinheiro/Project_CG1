@@ -6,20 +6,13 @@
 #include "../headers/Sphere.h"
 #include "../headers/Ray.h"
 
-// struct HitInfo2 {
-//     bool hit; // Se ocorreu a interseção
-//     float t; // Distância ao longo do raio até a interseção
-//     utils::Vec4 point; // Ponto de interseção
-//     utils::Vec4 normal; // Normal da superfície na interseção
-// };
+
 class Flat {
     private:
         utils::Vec4 point; // A point on the plane
         utils::Vec4 normal; // The normal vector of the plane
 
-        utils::RGB diffuse = {1.0f, 1.0f, 1.0f}; // Diffuse color
-        utils::RGB specular = {1.0f, 1.0f, 1.0f}; // Specular color
-        float shininess = 10.0f; // Shininess factor for specular highlights
+        utils::Material material = utils::Material();
 
     public:
         Flat(const utils::Vec4& point, const utils::Vec4& normal);
@@ -27,13 +20,11 @@ class Flat {
         void setNormal(float x, float y, float z);
         void setDiffuse(float r, float g, float b);
         void setSpecular(float r, float g, float b);
-        void setShininess(float shininess) { this->shininess = shininess; }
-        utils::RGB getDiffuse() const { return this->diffuse; };
-        utils::RGB getSpecular() const { return this->specular; };
-        float getShininess() const { return this->shininess; };
+        void setShininess(float shininess) { this->material.setShininess(shininess); }
+        utils::Material getMaterial() const { return this->material; };
         utils::Vec4 getPoint() const { return this->point; };
         utils::Vec4 getNormal() const { return this->normal; };
-        HitInfo intersects(const Ray& ray) const;
+        utils::HitInfo intersects(const Ray& ray) const;
 };
 
 #endif // FLAT_H
