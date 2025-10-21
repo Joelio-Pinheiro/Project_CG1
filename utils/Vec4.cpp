@@ -42,6 +42,15 @@ namespace utils {
             return x * v.x + y * v.y + z * v.z;
         }
 
+        // Produto vetorial (prodVectorial) — só faz sentido para vetores (w=0)
+        Vec4 Vec4::prodVectorial(const Vec4& normal) const {
+            return Vec4::Vector(
+                y * normal.z - z * normal.y,
+                z * normal.x - x * normal.z,
+                x * normal.y - y * normal.x
+            );
+        }
+
         // Produto vetorial (cross) — só faz sentido para vetores (w=0)
         Vec4 Vec4::cross(const Vec4& v) const {
             return Vec4::Vector(

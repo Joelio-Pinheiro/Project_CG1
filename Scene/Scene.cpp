@@ -25,14 +25,14 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     float radius = 40.0f;
     float Zcenter = this->DWindow + radius; // Assumindo que DWindow é negativo
     // Sphere *sphere1 = new Sphere(radius, 0.0f, 0.0f, -100.0f);
-    // Cylinder *cylinder1 = new Cylinder(13.3f, radius*3.0f, utils::Vec4::Point(0.0f, 0.0f, -100.0f), utils::Vec4::Vector(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), true);
+    // Cylinder *cylinder1 = new Cylinder(13.3f, radius*3.0f, utils::Vec4::Point(0.0f, 0.0f, -100.0f), utils::Vec4::Vector(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), false);
     // cylinder1->setDiffuse(0.7f, 0.2f, 0.2f);
     // cylinder1->setSpecular(0.7f, 0.2f, 0.2f);
     // this->cylinders.push_back(cylinder1);
 
-    Cone *cone1 = new Cone(13.3f, radius*3.0f, 
-        utils::Vec4::Point(0.0f, 0.0f, -100.0f), 
-        utils::Vec4::Vector(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), true);
+    Cone *cone1 = new Cone(13.3f, radius*1.0f, 
+        utils::Vec4::Point(0.0f, 0.0f, -50.0f), 
+        utils::Vec4::Vector(1.0f, 1.0f, 1.0f), true);
     cone1->setDiffuse(1.0f, 0.2f, 0.2f);
     cone1->setSpecular(1.0f, 0.2f, 0.2f);
     this->cones.push_back(cone1);
@@ -49,7 +49,7 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     back->setShininess(1.0f);
     this->flats.push_back(back);
     
-    Light *light1 = new Light(0.0f, 60.0f, -30.0f, utils::RGB(0.7f, 0.7f, 0.7f), this);
+    Light *light1 = new Light(0.0f, 60.0f, 30.0f, utils::RGB(0.7f, 0.7f, 0.7f), this);
     this->lights.push_back(light1);
 
 }

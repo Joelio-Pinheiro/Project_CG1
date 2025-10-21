@@ -30,63 +30,11 @@ void Cone::setSpecular(float r, float g, float b) {
     this->material.setSpecular(r, g, b);
 }
 
-// utils::HitInfo Cone::intersects(const Ray& ray) const {
-//     utils::HitInfo hitInfo;
-//     hitInfo.hit = false;
-
-//     // Cálculo da interseção raio-cone
-//     utils::Vec4 rayDirection = ray.getDirection().normalize(); // dr
-//     utils::Vec4 rayOrigin = ray.getOrigin(); // P0
-//     utils::Vec4 dc = getDirection().normalize(); // vetor eixo do cone (dc)
-//     // utils::Vec4 w = getVertex() - rayOrigin; // V - P0
-//     utils::Vec4 w = rayOrigin - getVertex(); // P0 - V
-
-
-
-//     float tanTheta = radius / height; // tan(θ)
-//     float cosTheta2 = 1.0f / (1.0f + tanTheta * tanTheta); // cos^2(θ)
-//     float dpow = dc.dot(dc); // dc . dc
-//     float DdotC = rayDirection.dot(dc);
-//     float WdotC = w.dot(dc);
-
-//     // float a = (rayDirection.dot(dc)) * (rayDirection.dot(dc)) - dpow * cosTheta2; // a = (dr . dc)^2 - (dc . dc)cos^2(theta)
-//     float a = DdotC * DdotC - dpow * cosTheta2; // a = (dr . dc)^2 - (dc . dc)cos^2(theta)
-//     float b = 2.0f * (w.dot(rayDirection)) * cosTheta2 - (WdotC * DdotC); // b = w . dr * cos^2(theta) - (w . dc) * (dr . dc)
-//     // float b = 2.0f * (DdotC * WdotC - rayDirection.dot(w) * cosTheta2);
-//     // float c = (w.dot(dc) * w.dot(dc)) - w.dot(w) * cosTheta2; // c = (w . dc)^2 - (w . w)cos^2(theta)
-//     float c = WdotC * WdotC - w.dot(w) * cosTheta2;
-
-//     float discriminant = b * b - 4 * a * c;
-
-//     if (discriminant < 0) return hitInfo; // Sem interseção
-
-//     float sqrtDiscriminant = sqrt(discriminant);
-//     float t1 = (-b - sqrtDiscriminant) / (2 * a);
-//     float t2 = (-b + sqrtDiscriminant) / (2 * a);
-
-//     float t = std::min(t1, t2);
-//     if (t < 0) t = std::max(t1, t2);
-//     if (t < 0) return hitInfo; // Interseção atrás do raio
-
-//     t -= 0.001f; // Evitar auto-interseção
-//     utils::Vec4 PI = ray.position(t); // Ponto de interseção
-//     float y = (PI - baseCenter).dot(dc); // Projeção de (PI - C) no eixo do cone
-//     if (y < 0 || y > height) return hitInfo; // Interseção fora dos limites do cone
-    
-//     // normal da superfície
-//     utils::Vec4 n = (PI - getVertex() - dc * y * (radius / height)).normalize();
-    
-//     hitInfo.hit = true;
-//     hitInfo.point = PI;
-//     hitInfo.t = t;
-//     hitInfo.normal = n;
-
-//     return hitInfo;
-// }
 
 utils::HitInfo Cone::intersects(const Ray& ray) const {
     utils::HitInfo hitInfo;
     hitInfo.hit = false;
+    const float EPS = 1e-5f;
 
     utils::Vec4 dr = ray.getDirection().normalize(); // Direção do raio normalizada (dr)
     utils::Vec4 P0 = ray.getOrigin(); // Origem do raio (P0)
@@ -101,33 +49,62 @@ utils::HitInfo Cone::intersects(const Ray& ray) const {
     float DdotC = dr.dot(dc);
     float WdotC = w.dot(dc);
 
-    float a = DdotC * DdotC - cosTheta2;
-    float b = 2.0f * (DdotC * WdotC - dr.dot(w) * cosTheta2);
-    float c = WdotC * WdotC - w.dot(w) * cosTheta2;
+    float a = DdotC * DdotC - cosTheta2; // a = (dr . dc)^2 - (dc . dc)cos^2(theta)
+    // float b = 2.0f * (dr.dot(w) * cosTheta2 - DdotC * WdotC); // b = w . dr * cos^2(theta) - (w . dc) * (dr . dc)
+    float b = 2.0f * (DdotC * WdotC - dr.dot(w) * cosTheta2); // b = w . dr * cos^2(theta) - (w . dc) * (dr . dc)
+    float c = WdotC * WdotC - w.dot(w) * cosTheta2; // c = (w . dc)^2 - (w . w)cos^2(theta)
 
-    float disc = b * b - 4 * a * c;
-    if (disc < 0) return hitInfo;
 
-    float sqrtDisc = sqrt(disc);
-    float t1 = (-b - sqrtDisc) / (2 * a);
-    float t2 = (-b + sqrtDisc) / (2 * a);
+    if (std::abs(a) >= 1e-6) {
+        float disc = b * b - 4 * a * c;
+        if (disc > 0.0f) {
+            float sqrtDisc = sqrt(disc);
+            float t1 = (-b - sqrtDisc) / (2 * a);
+            float t2 = (-b + sqrtDisc) / (2 * a);
+            float candidates[2] = { t1, t2 };
+            for (int i = 0; i < 2; ++i) {
+                float t = candidates[i];
+                t -= 0.001f;
+                if (t <= EPS) continue; // Interseção atrás do raio
+                t += 0.001f; // Evitar auto-interseção
+                utils::Vec4 PI = ray.position(t);
+                float y = (PI - baseCenter).dot(dc);
+                if (y >= 0.0f - EPS && y <= height + EPS) { // Interseção fora dos limites do cone
+                    if (!hitInfo.hit || t < hitInfo.t) {
+                        hitInfo.hit = true;
+                        hitInfo.t = t;
+                        hitInfo.point = PI;
 
-    float t = (t1 > 0) ? t1 : t2;
-    if (t < 0) return hitInfo;
+                        // normal da superfície
+                        //utils::Vec4 n = (PI - V - dc * y * (radius / height)).normalize();
+                        utils::Vec4 n = ((PI - V).prodVectorial(dc).prodVectorial(PI - V)).normalize();
+                        hitInfo.normal = n;
+                    }
+                }
+            }
+        }
+    }
 
-    t += 0.001f; // Evitar auto-interseção
-    utils::Vec4 PI = ray.position(t);
-    float y = (PI - baseCenter).dot(dc);
+    if(isCapped()) {
+        // Verificar interseção com a base do cone
+        Flat *basecap = new Flat(baseCenter, dc * -1.0f);
+         utils::HitInfo baseHit = basecap->intersects(ray);
+         if (baseHit.hit) {
+             float yBase = (baseHit.point - baseCenter).length();
+             if (yBase <= radius + 1e-4f) {
+                 if (!hitInfo.hit || baseHit.t < hitInfo.t) {
+                     hitInfo.hit = true;
+                     hitInfo.t = baseHit.t;
+                     hitInfo.point = baseHit.point;
+                     hitInfo.normal = baseHit.normal;
+                 }
+             }
+         }
+    }
+    if (!hitInfo.hit) return hitInfo;
 
-    if (y < 0 || y > height) return hitInfo;
-
-    // normal da superfície
-    utils::Vec4 n = (PI - V - dc * y * (radius / height)).normalize();
-
-    hitInfo.hit = true;
-    hitInfo.point = PI;
-    hitInfo.t = t;
-    hitInfo.normal = n;
-
+    if (hitInfo.normal.dot(dr) > 0.0f) {
+        hitInfo.normal = hitInfo.normal * -1.0f; // Inverter a normal se estiver apontando para dentro
+    }
     return hitInfo;
 }
