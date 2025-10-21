@@ -55,7 +55,7 @@ bool Light::Shadow (const utils::HitInfo& hitInfo, const utils::Vec4& lightDir) 
     Ray shadowRay(hitInfo.point, lightDir); // pequeno deslocamento para evitar auto-sombra, alterar no futuro
 
 
-    for (const auto& sphere : this->scene->getSpheres()) {
+    for (const Sphere* sphere : this->scene->getSpheres()) {
         utils::HitInfo shadowHit = sphere->intersects(shadowRay);
 
         float lightDist = (positionF - hitInfo.point).length();
@@ -67,8 +67,20 @@ bool Light::Shadow (const utils::HitInfo& hitInfo, const utils::Vec4& lightDir) 
         }
 
     }
-    for (const auto& cylinder : this->scene->getCylinders()) {
+    for (const Cylinder* cylinder : this->scene->getCylinders()) {
         utils::HitInfo shadowHit = cylinder->intersects(shadowRay);
+
+        float lightDist = (positionF - hitInfo.point).length();
+        if (shadowHit.hit) {
+            float hitDist = (shadowHit.point - hitInfo.point).length();
+            if (hitDist < lightDist) {
+                return true;
+            }
+        }
+
+    }
+    for (const Cone* cone : this->scene->getCones()) {
+        utils::HitInfo shadowHit = cone->intersects(shadowRay);
 
         float lightDist = (positionF - hitInfo.point).length();
         if (shadowHit.hit) {

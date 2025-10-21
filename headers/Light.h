@@ -2,6 +2,8 @@
 #define LIGHT_H
 #include "../headers/utils.h"
 #include "../headers/Sphere.h"
+#include "../headers/Cylinder.h"
+#include "../headers/Cone.h"
 #include "../headers/Flat.h"
 #include "../headers/Ray.h"
 #include "../headers/Scene.h"

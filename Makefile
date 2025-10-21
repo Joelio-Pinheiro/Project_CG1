@@ -1,8 +1,8 @@
 all: main
 
-main: main.cpp build/Vec4.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Flat.o build/Cylinder.o build/Scene.o build/Light.o
+main: main.cpp build/Vec4.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Flat.o build/Cylinder.o build/Cone.o build/Scene.o build/Light.o
 	mkdir -p build
-	g++ main.cpp build/Vec4.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Flat.o build/Cylinder.o build/Scene.o build/Light.o -o main `sdl2-config --cflags --libs` -lGLEW -lGL
+	g++ main.cpp build/Vec4.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Flat.o build/Cylinder.o build/Cone.o build/Scene.o build/Light.o -o main `sdl2-config --cflags --libs` -lGLEW -lGL
 
 build/Vec4.o: utils/Vec4.cpp headers/utils.h
 	mkdir -p build
@@ -29,6 +29,10 @@ build/Flat.o: Scene/Flat.cpp headers/Flat.h
 build/Cylinder.o: Scene/Cylinder.cpp headers/Cylinder.h
 	mkdir -p build
 	g++ -c Scene/Cylinder.cpp -o build/Cylinder.o `sdl2-config --cflags`
+
+build/Cone.o: Scene/Cone.cpp headers/Cone.h
+	mkdir -p build
+	g++ -c Scene/Cone.cpp -o build/Cone.o `sdl2-config --cflags`
 	
 build/Scene.o: Scene/Scene.cpp headers/Scene.h
 	mkdir -p build

@@ -1,6 +1,8 @@
 #include "../headers/Scene.h"
 #include "../headers/Sphere.h"
 #include "../headers/Flat.h"
+#include "../headers/Cylinder.h"
+#include "../headers/Cone.h"
 #include "../headers/utils.h"
 #include "../headers/Ray.h"
 #include "../headers/Light.h"
@@ -23,15 +25,17 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     float radius = 40.0f;
     float Zcenter = this->DWindow + radius; // Assumindo que DWindow é negativo
     // Sphere *sphere1 = new Sphere(radius, 0.0f, 0.0f, -100.0f);
-    Cylinder *cylinder1 = new Cylinder(13.3f, radius*3.0f, utils::Vec4::Point(0.0f, 0.0f, -100.0f), utils::Vec4::Vector(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), true);
-    cylinder1->setDiffuse(0.7f, 0.2f, 0.2f);
-    cylinder1->setSpecular(0.7f, 0.2f, 0.2f);
-    this->cylinders.push_back(cylinder1);
+    // Cylinder *cylinder1 = new Cylinder(13.3f, radius*3.0f, utils::Vec4::Point(0.0f, 0.0f, -100.0f), utils::Vec4::Vector(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), true);
+    // cylinder1->setDiffuse(0.7f, 0.2f, 0.2f);
+    // cylinder1->setSpecular(0.7f, 0.2f, 0.2f);
+    // this->cylinders.push_back(cylinder1);
 
-    Cylinder *cylinder2 = new Cylinder(13.3f, radius*1.5f, utils::Vec4::Point(0.0f, 0.0f, -100.0f), utils::Vec4::Vector(0.0f, 0.0f, 1.0f), true);
-    cylinder2->setDiffuse(0.2f, 0.2f, 0.7f);
-    cylinder2->setSpecular(0.2f, 0.2f, 0.7f);
-    // this->cylinders.push_back(cylinder2);
+    Cone *cone1 = new Cone(13.3f, radius*3.0f, 
+        utils::Vec4::Point(0.0f, 0.0f, -100.0f), 
+        utils::Vec4::Vector(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), true);
+    cone1->setDiffuse(1.0f, 0.2f, 0.2f);
+    cone1->setSpecular(1.0f, 0.2f, 0.2f);
+    this->cones.push_back(cone1);
 
     Flat *floor = new Flat(utils::Vec4::Point(0.0f, -radius, 0.0f), utils::Vec4::Vector(0.0f, 1.0f, 0.0f));
     floor->setDiffuse(0.2f, 0.7f, 0.2f);
@@ -101,6 +105,18 @@ std::vector<SDL_Color> Scene::traceRays() {
                     utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
                     for(Light* light : this->lights) {
                         totalLight = totalLight + light->ComputeLighting(hitInfo, cylinder->getMaterial(), ray.getDirection());
+                    }
+                    hitColor = totalLight;
+                }
+            }
+            for (Cone* cone : this->cones) {
+                utils::HitInfo hitInfo = cone->intersects(ray);
+                if (hitInfo.hit && hitInfo.t < closestHit.t) {
+                    closestHit = hitInfo;
+
+                    utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
+                    for(Light* light : this->lights) {
+                        totalLight = totalLight + light->ComputeLighting(hitInfo, cone->getMaterial(), ray.getDirection());
                     }
                     hitColor = totalLight;
                 }
