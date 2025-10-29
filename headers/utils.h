@@ -20,7 +20,6 @@ namespace utils {
         Vec4 operator/(float k) const;
         float dot(const Vec4& v) const;
         Vec4 prodVectorial(const Vec4& normal) const;
-        Vec4 cross(const Vec4& v) const;
         float length() const;
         Vec4 normalize() const;
         void print() const;

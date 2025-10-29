@@ -51,15 +51,6 @@ namespace utils {
             );
         }
 
-        // Produto vetorial (cross) — só faz sentido para vetores (w=0)
-        Vec4 Vec4::cross(const Vec4& v) const {
-            return Vec4::Vector(
-                y * v.z - z * v.y,
-                z * v.x - x * v.z,
-                x * v.y - y * v.x
-            );
-        }
-
         // Norma (comprimento)
         float Vec4::length() const {
             return std::sqrt(x*x + y*y + z*z);

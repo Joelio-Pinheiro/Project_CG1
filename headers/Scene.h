@@ -7,6 +7,8 @@
 #include "../headers/Flat.h"
 #include "../headers/Cylinder.h"
 #include "../headers/Cone.h"
+#include "../headers/Triangle.h"
+#include "../headers/Mesh.h"
 #include "../headers/Ray.h"
 #include "../headers/Light.h"
 #include <vector>
@@ -26,6 +28,8 @@ class Scene {
         std::vector<Flat*> flats;
         std::vector<Cylinder*> cylinders;
         std::vector<Cone*> cones;
+        std::vector<Triangle*> triangles;
+        std::vector<Mesh*> meshes;
         std::vector<Light*> lights;
     public:
         Scene(float width, float height, float DWindow, int nRow, int nCol, utils::window *window);
@@ -37,6 +41,8 @@ class Scene {
         std::vector<Flat*> getFlats() const { return this->flats; }
         std::vector<Cylinder*> getCylinders() const { return this->cylinders; }
         std::vector<Cone*> getCones() const { return this->cones; }
+        std::vector<Triangle*> getTriangles() const { return this->triangles; }
+        std::vector<Mesh*> getMeshes() const { return this->meshes; }
 
         void incrementObserverZ(float z) { this->observerPosition.z += z; }
         void incrementObserverX(float x) { this->observerPosition.x += x; }

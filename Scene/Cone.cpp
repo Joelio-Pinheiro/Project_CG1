@@ -34,7 +34,7 @@ void Cone::setSpecular(float r, float g, float b) {
 utils::HitInfo Cone::intersects(const Ray& ray) const {
     utils::HitInfo hitInfo;
     hitInfo.hit = false;
-    const float EPS = 1e-5f;
+    const float EPS = 1e-3f;
 
     utils::Vec4 dr = ray.getDirection().normalize(); // Direção do raio normalizada (dr)
     utils::Vec4 P0 = ray.getOrigin(); // Origem do raio (P0)
@@ -64,9 +64,8 @@ utils::HitInfo Cone::intersects(const Ray& ray) const {
             float candidates[2] = { t1, t2 };
             for (int i = 0; i < 2; ++i) {
                 float t = candidates[i];
-                t -= 0.001f;
+                t -= EPS; // Evitar auto-interseção
                 if (t <= EPS) continue; // Interseção atrás do raio
-                t += 0.001f; // Evitar auto-interseção
                 utils::Vec4 PI = ray.position(t);
                 float y = (PI - baseCenter).dot(dc);
                 if (y >= 0.0f - EPS && y <= height + EPS) { // Interseção fora dos limites do cone
@@ -76,8 +75,14 @@ utils::HitInfo Cone::intersects(const Ray& ray) const {
                         hitInfo.point = PI;
 
                         // normal da superfície
-                        //utils::Vec4 n = (PI - V - dc * y * (radius / height)).normalize();
-                        utils::Vec4 n = ((PI - V).prodVectorial(dc).prodVectorial(PI - V)).normalize();
+                        // utils::Vec4 n = (PI - V - dc * y * (radius / height)).normalize();
+                        // utils::Vec4 n = ((PI - V).prodVectorial(dc).prodVectorial(PI - V)).normalize();
+                        float k = radius / height;
+                        utils::Vec4 pv = PI - V;
+                        utils::Vec4 n = (pv - dc * ((1 + k * k) * pv.dot(dc))).normalize();
+                        
+                        n = n * -1.0f; 
+
                         hitInfo.normal = n;
                     }
                 }
@@ -104,7 +109,9 @@ utils::HitInfo Cone::intersects(const Ray& ray) const {
     if (!hitInfo.hit) return hitInfo;
 
     if (hitInfo.normal.dot(dr) > 0.0f) {
-        hitInfo.normal = hitInfo.normal * -1.0f; // Inverter a normal se estiver apontando para dentro
+        hitInfo.normal = hitInfo.normal * -1.0f; 
     }
+
+    hitInfo.point = hitInfo.point + hitInfo.normal * EPS;
     return hitInfo;
 }

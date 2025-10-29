@@ -15,8 +15,8 @@ Light::Light(float x, float y, float z, utils::RGB intensity, Scene* scene) {
 utils::RGB Light::ComputeLighting(const utils::HitInfo& hitInfo, const utils::Material& material, const utils::Vec4& RayDirection) {
     utils::Vec4 normal =  hitInfo.normal; // N = (Pi - C) / |Pi - C|
     utils::Vec4 lightDir = (this->positionF - hitInfo.point).normalize(); // L = (PF - Pi) / |PF - Pi|
-    utils::Vec4 viewDir  = RayDirection * -1; // V = -dr
-    utils::Vec4 reflectDir = (normal * (2.0f * normal.dot(lightDir))) - lightDir; // R = 2(N . L)N - L
+    utils::Vec4 viewDir  = (RayDirection * -1).normalize(); // V = -dr
+    utils::Vec4 reflectDir = ((normal * (2.0f * normal.dot(lightDir))) - lightDir).normalize(); // R = 2(N . L)N - L
 
     utils::RGB colorDifuse = material.getDiffuse();
     utils::RGB colorSpecular = material.getSpecular();
@@ -52,7 +52,7 @@ utils::RGB Light::ComputeLighting(const utils::HitInfo& hitInfo, const utils::Ma
 }
 
 bool Light::Shadow (const utils::HitInfo& hitInfo, const utils::Vec4& lightDir) {
-    Ray shadowRay(hitInfo.point, lightDir); // pequeno deslocamento para evitar auto-sombra, alterar no futuro
+    Ray shadowRay(hitInfo.point, lightDir);
 
 
     for (const Sphere* sphere : this->scene->getSpheres()) {
@@ -81,6 +81,30 @@ bool Light::Shadow (const utils::HitInfo& hitInfo, const utils::Vec4& lightDir) 
     }
     for (const Cone* cone : this->scene->getCones()) {
         utils::HitInfo shadowHit = cone->intersects(shadowRay);
+
+        float lightDist = (positionF - hitInfo.point).length();
+        if (shadowHit.hit) {
+            float hitDist = (shadowHit.point - hitInfo.point).length();
+            if (hitDist < lightDist) {
+                return true;
+            }
+        }
+
+    }
+    for(const Triangle* triangle : this->scene->getTriangles()) {
+        utils::HitInfo shadowHit = triangle->intersects(shadowRay);
+
+        float lightDist = (positionF - hitInfo.point).length();
+        if (shadowHit.hit) {
+            float hitDist = (shadowHit.point - hitInfo.point).length();
+            if (hitDist < lightDist) {
+                return true;
+            }
+        }
+
+    }
+    for (const Mesh* mesh : this->scene->getMeshes()) {
+        utils::HitInfo shadowHit = mesh->intersects(shadowRay);
 
         float lightDist = (positionF - hitInfo.point).length();
         if (shadowHit.hit) {

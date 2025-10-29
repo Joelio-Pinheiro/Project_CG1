@@ -4,6 +4,8 @@
 #include "../headers/Sphere.h"
 #include "../headers/Cylinder.h"
 #include "../headers/Cone.h"
+#include "../headers/Triangle.h"
+#include "../headers/Mesh.h"
 #include "../headers/Flat.h"
 #include "../headers/Ray.h"
 #include "../headers/Scene.h"
