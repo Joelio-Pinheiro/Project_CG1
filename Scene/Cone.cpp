@@ -113,5 +113,11 @@ utils::HitInfo Cone::intersects(const Ray& ray) const {
     }
 
     hitInfo.point = hitInfo.point + hitInfo.normal * EPS;
+
+    hitInfo.u = fmodf(hitInfo.point.x * 0.2f, 1.0f);
+    hitInfo.v = fmodf(hitInfo.point.z * 0.2f, 1.0f);
+    if (hitInfo.u < 0) hitInfo.u += 1.0f;
+    if (hitInfo.v < 0) hitInfo.v += 1.0f;
+
     return hitInfo;
 }

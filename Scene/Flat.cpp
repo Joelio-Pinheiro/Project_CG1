@@ -35,9 +35,14 @@ utils::HitInfo Flat::intersects(const Ray& ray) const {
 
         if (t >= 0) {
             info.hit = true;
-            info.t = t;
+            info.t = t; 
             info.point = ray.position(t);
             info.normal = this->normal;
+            
+            info.u = fmodf(info.point.x * 0.2f, 1.0f);
+            info.v = fmodf(info.point.z * 0.2f, 1.0f);
+            if (info.u < 0) info.u += 1.0f;
+            if (info.v < 0) info.v += 1.0f;
         }
     }
     return info;

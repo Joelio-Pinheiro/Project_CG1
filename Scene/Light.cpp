@@ -22,6 +22,11 @@ utils::RGB Light::ComputeLighting(const utils::HitInfo& hitInfo, const utils::Ma
     utils::RGB colorSpecular = material.getSpecular();
     float shininess = material.getShininess();
 
+    if (material.hasTexture()) {
+        colorDifuse = material.texture->sample(hitInfo.u, hitInfo.v);
+        // colorDifuse = colorDifuse.AtSign(textureColor);
+    }
+
 
     // Componente ambiente
     utils::RGB ambientF = this->ambientLight.AtSign(colorDifuse); // Iamb @ Eamb

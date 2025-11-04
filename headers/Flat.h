@@ -20,6 +20,7 @@ class Flat {
         void setNormal(float x, float y, float z);
         void setDiffuse(float r, float g, float b);
         void setSpecular(float r, float g, float b);
+        void setMaterial(const utils::Material& mat) { this->material = mat; }
         void setShininess(float shininess) { this->material.setShininess(shininess); }
         utils::Material getMaterial() const { return this->material; };
         utils::Vec4 getPoint() const { return this->point; };

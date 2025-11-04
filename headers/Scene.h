@@ -11,6 +11,7 @@
 #include "../headers/Mesh.h"
 #include "../headers/Ray.h"
 #include "../headers/Light.h"
+#include "../headers/Texture.h"
 #include <vector>
 
 class Light;

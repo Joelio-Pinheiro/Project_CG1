@@ -33,6 +33,5 @@ int main(int argc, char **argv)
         
     }
 
-    myWindow.~window();
     return 0;
 }

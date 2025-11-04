@@ -69,6 +69,10 @@ utils::HitInfo Triangle::intersects(const Ray& ray) const {
         hitInfo.t = t;
         hitInfo.point = PI;
         hitInfo.normal = normal;
+        hitInfo.u = fmodf(hitInfo.point.x * 0.2f, 1.0f);
+        hitInfo.v = fmodf(hitInfo.point.z * 0.2f, 1.0f);
+        if (hitInfo.u < 0) hitInfo.u += 1.0f;
+        if (hitInfo.v < 0) hitInfo.v += 1.0f;
     }
 
     return hitInfo;

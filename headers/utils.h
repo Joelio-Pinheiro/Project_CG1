@@ -5,7 +5,9 @@
 #include <iostream>
 #include <cmath>
 #include <SDL.h>
+#include <SDL2/SDL_image.h>
 
+class Texture;
 namespace utils {
     
     struct Vec4 {
@@ -30,6 +32,9 @@ namespace utils {
         float t; // Distância ao longo do raio até a interseção
         utils::Vec4 point; // Ponto de interseção
         utils::Vec4 normal; // Normal da superfície na interseção
+
+        float u; // Coordenada u para mapeamento UV
+        float v; // Coordenada v para mapeamento UV
     };
     struct RGB {
         float r, g, b;
@@ -48,6 +53,8 @@ namespace utils {
         utils::RGB specular;
         utils::RGB ambient = this->diffuse;
         float shininess;
+        Texture* texture = nullptr;
+        
 
         Material() : diffuse(1.0f, 1.0f, 1.0f), specular(1.0f, 1.0f, 1.0f), shininess(10.0f) {}
         utils::RGB getDiffuse() const { return this->diffuse; }
@@ -58,6 +65,9 @@ namespace utils {
         void setSpecular(float r, float g, float b) { this->specular = utils::RGB(r, g, b); }
         void setAmbient(float r, float g, float b) { this->ambient = utils::RGB(r, g, b); }
         void setShininess(float shininess) { this->shininess = shininess; }
+        void setTexture(Texture* tex) { this->texture = tex; }
+        
+        bool hasTexture() const { return texture != nullptr; }
     };
 
     class window {

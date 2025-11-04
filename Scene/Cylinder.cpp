@@ -105,5 +105,9 @@ utils::HitInfo Cylinder::intersects(const Ray& ray) const{
     if (info.normal.dot(rayDirection) > 0.0f) {
         info.normal = info.normal * -1.0f;
     }
+    info.u = fmodf(info.point.x * 0.2f, 1.0f);
+    info.v = fmodf(info.point.z * 0.2f, 1.0f);
+    if (info.u < 0) info.u += 1.0f;
+    if (info.v < 0) info.v += 1.0f;
     return info;
 }

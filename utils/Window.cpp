@@ -11,6 +11,11 @@ namespace utils
             std::cerr << "SDL_Init error: " << SDL_GetError() << "\n";
             return;
         }
+        if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+            std::cerr << "Erro ao inicializar SDL_image: " << IMG_GetError() << std::endl;
+            return;
+        }
+
         // setar tamanho
         this->WWindow = width;
         this->HWindow = height;
@@ -31,7 +36,9 @@ namespace utils
     }
 
     window::~window() {
+        SDL_DestroyRenderer(this->renderer);
         SDL_DestroyWindow(this->w);
+        IMG_Quit();
         SDL_Quit();
     }
 
