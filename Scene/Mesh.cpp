@@ -27,6 +27,17 @@ void Mesh::addTriangle(const utils::Vec4& p1, const utils::Vec4& p2, const utils
     this->triangles.emplace_back(triangle);
 }
 
+void Mesh::translation(const utils::Vec4& t) {
+    for (Triangle* triangle : this->triangles) {
+        triangle->translation(t);
+    }
+}
+void Mesh::scale(float s, const utils::Vec4& center) {
+    for (Triangle* triangle : this->triangles) {
+        triangle->scale(s, center);
+    }
+}
+
 utils::HitInfo Mesh::intersects(const Ray& ray) const {
     utils::HitInfo closestHit;
     closestHit.hit = false;

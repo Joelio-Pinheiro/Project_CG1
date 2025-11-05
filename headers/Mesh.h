@@ -29,6 +29,9 @@ class Mesh {
 
         bool loadFromOBJ(const std::string& filepath);
 
+        void translation(const utils::Vec4& t);
+        void scale(float s, const utils::Vec4& center);
+
 };
 
 #endif // MESH_H

@@ -16,6 +16,17 @@ void Triangle::setSpecular(float r, float g, float b) {
     this->material.setSpecular(r, g, b);
 }
 
+void Triangle::translation(const utils::Vec4& translation) {
+    setP1(getP1() + translation);
+    setP2(getP2() + translation);
+    setP3(getP3() + translation);
+}
+void Triangle::scale(float s, const utils::Vec4& center) {
+    setP1((getP1() - center) * s + center);
+    setP2((getP2() - center) * s + center);
+    setP3((getP3() - center) * s + center);
+}
+
 utils::HitInfo Triangle::intersects(const Ray& ray) const {
     utils::HitInfo hitInfo;
     hitInfo.hit = false;

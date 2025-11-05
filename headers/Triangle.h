@@ -22,6 +22,9 @@ class Triangle {
         void setSpecular(float r, float g, float b);
         void setMaterial(const utils::Material& material) { this->material = material; }
 
+        void translation(const utils::Vec4& translation);
+        void scale(float s, const utils::Vec4& center);
+
         utils::Material getMaterial() const { return this->material; }
         utils::Vec4 getP1() const { return p1; };
         utils::Vec4 getP2() const { return p2; };

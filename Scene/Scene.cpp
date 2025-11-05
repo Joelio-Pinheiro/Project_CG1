@@ -22,128 +22,128 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     this->setAmbientLight(0.3f, 0.3f, 0.3f);
 
 
+    // Chão
     Flat *floor = new Flat(
-        utils::Vec4::Point(0.0f, -1.0f, 0.0f),
+        utils::Vec4::Point(0.0f, -1.5f, 0.0f),
         utils::Vec4::Vector(0.0f, 1.0f, 0.0f)
     );
     Texture* floorTexture = new Texture("models/madeira.png");
     utils::Material floorMat;
 
     floorMat.setTexture(floorTexture);
-    // floor->setDiffuse(0.1f, 0.6f, 0.1f);
-    floorMat.setSpecular(0.0f, 0.0f, 0.0f);
     floorMat.setShininess(2.0f);
     floor->setMaterial(floorMat);
     this->flats.push_back(floor);
     
-    Flat *back = new Flat(
-        utils::Vec4::Point(0.0f, 0.0f, -10.0f),
-        utils::Vec4::Vector(0.0f, 0.0f, 1.0f)
+    // Parede lateral direita
+    Flat *rightWall = new Flat(
+        utils::Vec4::Point(2.0f, -1.5f, 0.0f),
+        utils::Vec4::Vector(-1.0f, 0.0f, 0.0f)
     );
-    back->setDiffuse(0.2f, 0.2f, 0.5f);
-    back->setSpecular(0.0f, 0.0f, 0.0f);
-    back->setShininess(1.0f);
-    this->flats.push_back(back);
+    rightWall->setDiffuse(0.686f, 0.933f, 0.933f);
+    rightWall->setSpecular(0.686f, 0.933f, 0.933f);
+    rightWall->setShininess(2.0f);
+    this->flats.push_back(rightWall);
+
+    // PAREDE 
+    Flat *frontWall = new Flat(
+        utils::Vec4::Point(0.0f, -1.5f, 2.0f),
+        utils::Vec4::Vector(0.0f, 0.0f, -1.0f)
+    );
+    frontWall->setDiffuse(0.686f, 0.933f, 0.933f);
+    frontWall->setSpecular(0.686f, 0.933f, 0.933f);
+    this->flats.push_back(frontWall);
+
+    // PAREDE LATERAL ESQUERDA
+    Flat *leftWall = new Flat(
+        utils::Vec4::Point(-2.0f, -1.5f, 0.0f),
+        utils::Vec4::Vector(1.0f, 0.0f, 0.0f)
+    );
+    leftWall->setDiffuse(0.686f, 0.933f, 0.933f);
+    leftWall->setSpecular(0.686f, 0.933f, 0.933f);
+    this->flats.push_back(leftWall);
+
+    // TETO
+    Flat *ceiling = new Flat(
+        utils::Vec4::Point(0.0f, 1.5f, 0.0f),
+        utils::Vec4::Vector(0.0f, -1.0f, 0.0f)
+    );
+    ceiling->setDiffuse(0.933f, 0.933f, 0.933f);
+    ceiling->setSpecular(0.933f, 0.933f, 0.933f);
+    this->flats.push_back(ceiling);
     
-    // Objetos Mesh
+    // CILINDRO
+    Cylinder *cylinder = new Cylinder(
+        0.5f, 0.9f,
+        utils::Vec4::Point(0.0f, -1.5f, -2.0f),
+        utils::Vec4::Vector(0.0f, 1.0f, 0.0f),
+        true
+    );
+    cylinder->setDiffuse(0.824f, 0.706f, 0.549f);
+    cylinder->setSpecular(0.824f, 0.706f, 0.549f);
+    this->cylinders.push_back(cylinder);
+
+    // CONE
+    Cone *cone = new Cone(
+        0.9f, 1.5f,
+        utils::Vec4::Point(0.0f, -0.6f, -2.0f),
+        utils::Vec4::Vector(0.0f, 1.0f, 0.0f),
+        true
+    );
+    cone->setDiffuse(0.0f, 1.0f, 0.498f);
+    cone->setSpecular(0.0f, 1.0f, 0.498f);
+    this->cones.push_back(cone);
+
+    // ESFERA
+    Sphere *sphere = new Sphere(
+        0.05f,
+        0.0f, 0.95f, -2.0f
+    );
+    sphere->setDiffuse(0.854f, 0.647f, 0.125f);
+    sphere->setSpecular(0.854f, 0.647f, 0.125f);
+    this->spheres.push_back(sphere);
+
+    // CUBO
+    utils::Vec4 baseCenter = utils::Vec4::Point(0.0f, -1.5f, -1.65f);
+    float a = 0.5f; // metade da aresta basica
+
+    std::vector<utils::Vec4> cubeVerts = {
+        // base (y = 0)
+        utils::Vec4::Point(-a, 0.0f, -a),
+        utils::Vec4::Point(a, 0.0f, -a),
+        utils::Vec4::Point(a, 0.0f, a),
+        utils::Vec4::Point(-a, 0.0f, a),
+
+        // topo (y = 1 porque aresta=1 no espaço local)
+        utils::Vec4::Point(-a, 1.0f, -a),
+        utils::Vec4::Point(a, 1.0f, -a),
+        utils::Vec4::Point(a, 1.0f, a),
+        utils::Vec4::Point(-a, 1.0f, a)
+    };
+    // indices dos triângulos
+    std::vector<unsigned int> cubeIndices = {
+        0,1,2,  0,2,3,
+        4,5,6,  4,6,7,
+        0,1,5,  0,5,4,
+        3,2,6,  3,6,7,
+        0,3,7,  0,7,4,
+        1,2,6,  1,6,5
+    };
     
-    Mesh *object = new Mesh();
-    bool test = object->loadFromOBJ("models/humanoid_tri.obj");
-    
-    if (test) {
-            std::cout << "OBJ file loaded successfully." << std::endl;
-        
-            utils::Material redMat;
-            redMat.diffuse = {0.8f, 0.2f, 0.2f};
-            redMat.specular = {0.7f, 0.3f, 0.3f};
-            redMat.shininess = 16.0f;
-            object->setMaterial(redMat);
-        
-            // 🔁 Escalar e transladar o modelo para o campo de visão
-            float scale = 0.3f;
-            float angleY = M_PI / 2;      // 180° para virar de frente
-            float angleX = -M_PI / 2; // -90° para levantar o modelo
-        
-            for (Triangle *const t : object->getTriangles()) {
-                    utils::Vec4 p1 = t->getP1() * scale;
-                    utils::Vec4 p2 = t->getP2() * scale;
-                    utils::Vec4 p3 = t->getP3() * scale;
-            
-                    // Rotação em X
-                    auto rotateX = [&](const utils::Vec4 &p) -> utils::Vec4 {
-                            float y = p.y * cos(angleX) - p.z * sin(angleX);
-                            float z = p.y * sin(angleX) + p.z * cos(angleX);
-                            return utils::Vec4::Point(p.x, y, z);
-                        };
-                
-                        // Rotação em Y (para o modelo olhar pra câmera)
-                        auto rotateY = [&](const utils::Vec4 &p) -> utils::Vec4 {
-                                float x = p.x * cos(angleY) + p.z * sin(angleY);
-                                float z = -p.x * sin(angleY) + p.z * cos(angleY);
-                                return utils::Vec4::Point(x, p.y, z);
-                            };
-                    
-                            p1 = rotateY(rotateX(p1));
-                            p2 = rotateY(rotateX(p2));
-                            p3 = rotateY(rotateX(p3));
-                    
-                            utils::Vec4 translation = utils::Vec4::Vector(0, -0.5f, -7.0f);
-                            t->setP1(p1 + translation);
-                            t->setP2(p2 + translation);
-                            t->setP3(p3 + translation);
-                        }
-                    
-                        this->meshes.push_back(object);
-                    }
-                    
-    Mesh *pyramid = new Mesh();
-    pyramid->addTriangle({0, 1, 0, 1}, {-1, 0, 1, 1}, {1, 0, 1, 1});
-    pyramid->addTriangle({0, 1, 0, 1}, {1, 0, 1, 1}, {1, 0, -1, 1});
-    pyramid->addTriangle({0, 1, 0, 1}, {1, 0, -1, 1}, {-1, 0, -1, 1});
-    pyramid->addTriangle({0, 1, 0, 1}, {-1, 0, -1, 1}, {-1, 0, 1, 1});
-                    
-    utils::Material redMat;
-    redMat.diffuse = {0.8f, 0.2f, 0.2f};
-    redMat.specular = {0.8f, 0.3f, 0.3f};
-    redMat.shininess = 16.0f;
-    pyramid->setMaterial(redMat);
-                    
-    // Transladar a pirâmide um pouco pra frente e pra cima do chão
-    for (Triangle *const t : pyramid->getTriangles()) {
-        t->setP1(t->getP1() + utils::Vec4::Vector(0, -0.5f, -6.0f));
-        t->setP2(t->getP2() + utils::Vec4::Vector(0, -0.5f, -6.0f));
-        t->setP3(t->getP3() + utils::Vec4::Vector(0, -0.5f, -6.0f));
-    }
-    this->meshes.push_back(pyramid);
-                    
-                    
-    Mesh *cube = new Mesh();
-    cube->addTriangle({-0.5f, 0.0f, -0.5f, 1}, {0.5f, 0.0f, -0.5f, 1}, {0.5f, 1.0f, -0.5f, 1});
-    cube->addTriangle({-0.5f, 0.0f, -0.5f, 1}, {0.5f, 1.0f, -0.5f, 1}, {-0.5f, 1.0f, -0.5f, 1});
-    cube->addTriangle({-0.5f, 0.0f, 0.5f, 1}, {0.5f, 0.0f, 0.5f, 1}, {0.5f, 1.0f, 0.5f, 1});
-    cube->addTriangle({-0.5f, 0.0f, 0.5f, 1}, {0.5f, 1.0f, 0.5f, 1}, {-0.5f, 1.0f, 0.5f, 1});
-    cube->addTriangle({-0.5f, 1.0f, -0.5f, 1}, {0.5f, 1.0f, -0.5f, 1}, {0.5f, 1.0f, 0.5f, 1});
-    cube->addTriangle({-0.5f, 1.0f, -0.5f, 1}, {0.5f, 1.0f, 0.5f, 1}, {-0.5f, 1.0f, 0.5f, 1});
-    cube->addTriangle({-0.5f, 0.0f, -0.5f, 1}, {0.5f, 0.0f, -0.5f, 1}, {0.5f, 0.0f, 0.5f, 1});
-    cube->addTriangle({-0.5f, 0.0f, -0.5f, 1}, {0.5f, 0.0f, 0.5f, 1}, {-0.5f, 0.0f, 0.5f, 1});
-    
+    Mesh *cube = new Mesh(cubeVerts, cubeIndices);
     utils::Material blueMat;
-    blueMat.diffuse = {0.2f, 0.2f, 0.8f};
-    blueMat.specular = {0.5f, 0.5f, 0.8f};
-    blueMat.shininess = 12.0f;
+    blueMat.diffuse = {1.0f, 0.078f, 0.576f};
+    blueMat.specular = {1.0f, 0.078f, 0.576f};
     cube->setMaterial(blueMat);
-    
-    for (Triangle *const triangle : cube->getTriangles()) {
-        triangle->setP1(triangle->getP1() + utils::Vec4::Vector(2.5f, -0.5f, -6.5f));
-        triangle->setP2(triangle->getP2() + utils::Vec4::Vector(2.5f, -0.5f, -6.5f));
-        triangle->setP3(triangle->getP3() + utils::Vec4::Vector(2.5f, -0.5f, -6.5f));
-    }
+
+    cube->translation(baseCenter);
+    cube->scale(0.4f, baseCenter);
     this->meshes.push_back(cube);
     
     
     Light *mainLight = new Light(
-        -5.0f, 8.0f, -3.0f,
-        utils::RGB(0.8f, 0.8f, 0.8f),
+        -1.0f, 1.4f, -0.2f,
+        utils::RGB(0.7f, 0.7f, 0.7f),
         this
     );
     this->lights.push_back(mainLight);
