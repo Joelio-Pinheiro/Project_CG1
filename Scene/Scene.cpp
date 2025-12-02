@@ -71,38 +71,6 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     ceiling->setDiffuse(0.933f, 0.933f, 0.933f);
     ceiling->setSpecular(0.933f, 0.933f, 0.933f);
     this->flats.push_back(ceiling);
-    
-    // CILINDRO
-    Cylinder *cylinder = new Cylinder(
-        0.5f, 0.9f,
-        utils::Vec4::Point(0.0f, -1.5f, -2.0f),
-        utils::Vec4::Vector(0.0f, 1.0f, 0.0f),
-        true
-    );
-    cylinder->setDiffuse(0.824f, 0.706f, 0.549f);
-    cylinder->setSpecular(0.824f, 0.706f, 0.549f);
-    this->cylinders.push_back(cylinder);
-
-    // CONE
-    Cone *cone = new Cone(
-        0.9f, 1.5f,
-        utils::Vec4::Point(0.0f, -0.6f, -2.0f),
-        utils::Vec4::Vector(0.0f, 1.0f, 0.0f),
-        true
-    );
-    cone->setDiffuse(0.0f, 1.0f, 0.498f);
-    cone->setSpecular(0.0f, 1.0f, 0.498f);
-    this->cones.push_back(cone);
-
-    // ESFERA
-    Sphere *sphere = new Sphere(
-        0.05f,
-        0.0f, 0.95f, -2.0f
-    );
-    sphere->setDiffuse(0.854f, 0.647f, 0.125f);
-    sphere->setSpecular(0.854f, 0.647f, 0.125f);
-    this->spheres.push_back(sphere);
-
     // CUBO
     utils::Vec4 baseCenter = utils::Vec4::Point(0.0f, -1.5f, -1.65f);
     float a = 0.5f; // metade da aresta basica
@@ -136,8 +104,26 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     blueMat.specular = {1.0f, 0.078f, 0.576f};
     cube->setMaterial(blueMat);
 
-    cube->translation(baseCenter);
-    cube->scale(0.4f, baseCenter);
+    // Transformações no cubo
+    utils::Vec4 modelCenter = utils::Vec4::Point(0.0f, 0.5f, 0.0f);
+    cube->scale(1.2f, modelCenter); 
+    cube->shear(0.3f, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            modelCenter);      
+    utils::Vec4 worldPos = utils::Vec4::Vector(0.0f, -2.5f, -1.65f - 1.5f); 
+    cube->translation(worldPos);
+    cube->reflection(
+        utils::Vec4::Point(0.0f, -1.5f, 0.0f),
+        utils::Vec4::Vector(0.0f, 1.0f, 0.0f) 
+    );
+    // cube->rotationY(25.0f, modelCenter + worldPos);
+    // cube->rotationX(15.0f, modelCenter + worldPos);
+    // cube->rotationZ(10.0f, modelCenter + worldPos);
+    cube->rotationAxisQuaternion(
+        25.0f,
+        utils::Vec4::Vector(1.0f, 1.0f, 0.0f),
+        worldPos
+    );
     this->meshes.push_back(cube);
     
     

@@ -67,4 +67,28 @@ namespace utils {
         void Vec4::print() const {
             std::cout << "(" << x << ", " << y << ", " << z << ", " << w << ")\n";
         }
+
+        // Rotacionar vetor usando quaternion
+        Vec4 Vec4::rotateVec(const Quaternion& q) const {
+            utils::Quaternion pQuat(0, x, y, z);
+            utils::Quaternion qConj = q.conjugate();
+            
+            // q * p
+            Quaternion qp(
+                q.w*pQuat.w - q.x*pQuat.x - q.y*pQuat.y - q.z*pQuat.z,
+                q.w*pQuat.x + q.x*pQuat.w + q.y*pQuat.z - q.z*pQuat.y,
+                q.w*pQuat.y - q.x*pQuat.z + q.y*pQuat.w + q.z*pQuat.x,
+                q.w*pQuat.z + q.x*pQuat.y - q.y*pQuat.x + q.z*pQuat.w
+            );
+
+            // (q * p) * q⁻¹
+            Quaternion result(
+                qp.w*qConj.w - qp.x*qConj.x - qp.y*qConj.y - qp.z*qConj.z,
+                qp.w*qConj.x + qp.x*qConj.w + qp.y*qConj.z - qp.z*qConj.y,
+                qp.w*qConj.y - qp.x*qConj.z + qp.y*qConj.w + qp.z*qConj.x,
+                qp.w*qConj.z + qp.x*qConj.y - qp.y*qConj.x + qp.z*qConj.w
+            );
+
+            return utils::Vec4(result.x, result.y, result.z);
+        }
 }

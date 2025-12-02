@@ -9,7 +9,7 @@
 
 class Texture;
 namespace utils {
-    
+    struct Quaternion;
     struct Vec4 {
         float x, y, z, w;
         
@@ -25,6 +25,7 @@ namespace utils {
         float length() const;
         Vec4 normalize() const;
         void print() const;
+        Vec4 rotateVec(const Quaternion& q) const;
     };
     
     struct HitInfo {
@@ -68,6 +69,26 @@ namespace utils {
         void setTexture(Texture* tex) { this->texture = tex; }
         
         bool hasTexture() const { return texture != nullptr; }
+    };
+    struct Quaternion{
+        float w, x, y, z;
+
+        Quaternion(float w, float x, float y, float z)
+            : w(w), x(x), y(y), z(z) {}
+
+        static Quaternion fromAxisAngle(const utils::Vec4& axis, float angleRad) {
+            utils::Vec4 u = axis.normalize();
+            float s = sin(angleRad / 2.0f);
+            return Quaternion(
+                cos(angleRad / 2.0f),
+                u.x * s,
+                u.y * s,
+                u.z * s
+            );
+        }
+        Quaternion conjugate() const {
+            return Quaternion(w, -x, -y, -z);
+        }
     };
 
     class window {

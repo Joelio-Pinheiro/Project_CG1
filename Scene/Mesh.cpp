@@ -27,6 +27,7 @@ void Mesh::addTriangle(const utils::Vec4& p1, const utils::Vec4& p2, const utils
     this->triangles.emplace_back(triangle);
 }
 
+// Transformações
 void Mesh::translation(const utils::Vec4& t) {
     for (Triangle* triangle : this->triangles) {
         triangle->translation(t);
@@ -35,6 +36,36 @@ void Mesh::translation(const utils::Vec4& t) {
 void Mesh::scale(float s, const utils::Vec4& center) {
     for (Triangle* triangle : this->triangles) {
         triangle->scale(s, center);
+    }
+}
+void Mesh::shear(float shXY, float shXZ, float shYX, float shYZ, float shZX, float shZY, const utils::Vec4& center) {
+    for (Triangle* triangle : this->triangles) {
+        triangle->shear(shXY, shXZ, shYX, shYZ, shZX, shZY, center);
+    }
+} 
+void Mesh::reflection(const utils::Vec4& planePoint, const utils::Vec4& planeNormal) {
+    for (Triangle* triangle : this->triangles) {
+        triangle->reflection(planePoint, planeNormal);
+    }
+}
+void Mesh::rotationX(float angle, const utils::Vec4& center) {
+    for (Triangle* triangle : this->triangles) {
+        triangle->rotationX(angle, center);
+    }
+}
+void Mesh::rotationY(float angle, const utils::Vec4& center) {
+    for (Triangle* triangle : this->triangles) {
+        triangle->rotationY(angle, center);
+    }
+}
+void Mesh::rotationZ(float angle, const utils::Vec4& center) {
+    for (Triangle* triangle : this->triangles) {
+        triangle->rotationZ(angle, center);
+    }
+}
+void Mesh::rotationAxisQuaternion(float angle, const utils::Vec4& axis, const utils::Vec4& center) {
+    for (Triangle* triangle : this->triangles) {
+        triangle->rotationAxisQuaternion(angle, axis, center);
     }
 }
 
@@ -74,17 +105,9 @@ bool Mesh::loadFromOBJ(const std::string& filepath) {
             iss >> x >> y >> z;
             temp_vertices.emplace_back(utils::Vec4::Point(x, y, z));
         } else if (type == "f") {
-            // unsigned int vertexIndex[3];
-            // for (int i = 0; i < 3; i++) {
-            //     std::string vertexStr;
-            //     iss >> vertexStr;
-            //     std::istringstream viss(vertexStr);
-            //     viss >> vertexIndex[i];
-            //     vertexIndices.push_back(vertexIndex[i]);
-            // }
             unsigned int v1, v2, v3;
             iss >> v1 >> v2 >> v3;
-            // OBJ usa índices baseados em 1
+            // OBJ usa os indices baseados em 1
             vertexIndices.push_back(v1 - 1);
             vertexIndices.push_back(v2 - 1);
             vertexIndices.push_back(v3 - 1);
@@ -93,11 +116,5 @@ bool Mesh::loadFromOBJ(const std::string& filepath) {
     file.close();
     // Construir os triângulos a partir dos índices
     *this = Mesh(temp_vertices, vertexIndices);
-    // for (size_t i = 0; i < vertexIndices.size(); i += 3) {
-    //     utils::Vec4 p1 = temp_vertices[vertexIndices[i] - 1];
-    //     utils::Vec4 p2 = temp_vertices[vertexIndices[i + 1] - 1];
-    //     utils::Vec4 p3 = temp_vertices[vertexIndices[i + 2] - 1];
-    //     addTriangle(p1, p2, p3);
-    // }
     return true;
 }

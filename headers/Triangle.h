@@ -24,6 +24,12 @@ class Triangle {
 
         void translation(const utils::Vec4& translation);
         void scale(float s, const utils::Vec4& center);
+        void shear(float shXY, float shXZ, float shYX, float shYZ, float shZX, float shZY, const utils::Vec4& center);
+        void reflection(const utils::Vec4& planePoint, const utils::Vec4& planeNormal);
+        void rotationX(float angle, const utils::Vec4& center);
+        void rotationY(float angle, const utils::Vec4& center);
+        void rotationZ(float angle, const utils::Vec4& center);
+        void rotationAxisQuaternion(float angle, const utils::Vec4& axis, const utils::Vec4& center);
 
         utils::Material getMaterial() const { return this->material; }
         utils::Vec4 getP1() const { return p1; };

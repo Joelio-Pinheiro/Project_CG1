@@ -1,6 +1,7 @@
 #include "../headers/Triangle.h"
 #include "../headers/utils.h"
 
+const float PI = 3.14159265f;
 
 Triangle::Triangle(utils::Vec4 p1, utils::Vec4 p2, utils::Vec4 p3) {
     setP1(p1);
@@ -16,6 +17,7 @@ void Triangle::setSpecular(float r, float g, float b) {
     this->material.setSpecular(r, g, b);
 }
 
+// Transformações
 void Triangle::translation(const utils::Vec4& translation) {
     setP1(getP1() + translation);
     setP2(getP2() + translation);
@@ -25,6 +27,174 @@ void Triangle::scale(float s, const utils::Vec4& center) {
     setP1((getP1() - center) * s + center);
     setP2((getP2() - center) * s + center);
     setP3((getP3() - center) * s + center);
+}
+void Triangle::shear(float shXY, float shXZ, float shYX, float shYZ, float shZX, float shZY, const utils::Vec4& center) {
+    // Cisalhamento no P1
+    utils::Vec4 p1 = getP1() - center;
+    float x = p1.x;
+    float y = p1.y;
+    float z = p1.z;
+
+    p1.x = x + shXY * y + shXZ * z;
+    p1.y = y + shYX * x + shYZ * z;
+    p1.z = z + shZX * x + shZY * y;
+    setP1(p1 + center);
+    
+    // Cisalhamento no P2
+    utils::Vec4 p2 = getP2() - center;
+    float x2 = p2.x;
+    float y2 = p2.y;
+    float z2 = p2.z;
+
+    p2.x = x2 + shXY * y2 + shXZ * z2;
+    p2.y = y2 + shYX * x2 + shYZ * z2;
+    p2.z = z2 + shZX * x2 + shZY * y2;
+    setP2(p2 + center);
+    
+    // Cisalhamento no P3
+    utils::Vec4 p3 = getP3() - center;
+    float x3 = p3.x;
+    float y3 = p3.y;
+    float z3 = p3.z;
+
+    p3.x = x3 + shXY * y3 + shXZ * z3;
+    p3.y = y3 + shYX * x3 + shYZ * z3;
+    p3.z = z3 + shZX * x3 + shZY * y3;
+    setP3(p3 + center);
+}
+
+void Triangle::reflection(const utils::Vec4& planePoint, const utils::Vec4& planeNormal) {
+    utils::Vec4 N = planeNormal.normalize();
+    utils::Vec4 P0 = planePoint;
+
+    // reflection no P1
+    utils::Vec4 p1 = getP1();
+    float d1 = (p1 - P0).dot(N); // (p1 - P0) . N
+    utils::Vec4 reflectedP1 = p1 - N * (2 * d1); // p1 - N * (2 * ((p1 - P0) . N))
+    setP1(reflectedP1);
+
+    // reflection no P2
+    utils::Vec4 p2 = getP2();
+    float d2 = (p2 - P0).dot(N);
+    utils::Vec4 reflectedP2 = p2 - N * (2 * d2);
+    setP2(reflectedP2);
+
+    // reflection no P3
+    utils::Vec4 p3 = getP3();
+    float d3 = (p3 - P0).dot(N);
+    utils::Vec4 reflectedP3 = p3 - N * (2 * d3);
+    setP3(reflectedP3);
+}
+
+void Triangle::rotationX(float angle, const utils::Vec4& center) {
+    float rad = angle * (PI / 180.0f);
+    float cosA = cos(rad);
+    float sinA = sin(rad);
+
+    // Rotação no P1
+    utils::Vec4 p1 = getP1() - center;
+    float y1 = p1.y * cosA - p1.z * sinA;
+    float z1 = p1.y * sinA + p1.z * cosA;
+    p1.y = y1;
+    p1.z = z1;
+    setP1(p1 + center);
+
+    // Rotação no P2
+    utils::Vec4 p2 = getP2() - center;
+    float y2 = p2.y * cosA - p2.z * sinA;
+    float z2 = p2.y * sinA + p2.z * cosA;
+    p2.y = y2;
+    p2.z = z2;
+    setP2(p2 + center);
+
+    // Rotação no P3
+    utils::Vec4 p3 = getP3() - center;
+    float y3 = p3.y * cosA - p3.z * sinA;
+    float z3 = p3.y * sinA + p3.z * cosA;
+    p3.y = y3;
+    p3.z = z3;
+    setP3(p3 + center);
+}
+
+void Triangle::rotationY(float angle, const utils::Vec4& center) {
+    float rad = angle * (PI / 180.0f);
+    float cosA = cos(rad);
+    float sinA = sin(rad);
+
+    // Rotação no P1
+    utils::Vec4 p1 = getP1() - center;
+    float x1 = p1.z * sinA + p1.x * cosA;
+    float z1 = p1.z * cosA - p1.x * sinA;
+    p1.x = x1;
+    p1.z = z1;
+    setP1(p1 + center);
+
+    // Rotação no P2
+    utils::Vec4 p2 = getP2() - center;
+    float x2 = p2.z * sinA + p2.x * cosA;
+    float z2 = p2.z * cosA - p2.x * sinA;
+    p2.x = x2;
+    p2.z = z2;
+    setP2(p2 + center);
+
+    // Rotação no P3
+    utils::Vec4 p3 = getP3() - center;
+    float x3 = p3.z * sinA + p3.x * cosA;
+    float z3 = p3.z * cosA - p3.x * sinA;
+    p3.x = x3;
+    p3.z = z3;
+    setP3(p3 + center);
+}
+
+void Triangle::rotationZ(float angle, const utils::Vec4& center) {
+    float rad = angle * (PI / 180.0f);
+    float cosA = cos(rad);
+    float sinA = sin(rad);
+
+    // Rotação no P1
+    utils::Vec4 p1 = getP1() - center;
+    float x1 = p1.x * cosA - p1.y * sinA;
+    float y1 = p1.x * sinA + p1.y * cosA;
+    p1.x = x1;
+    p1.y = y1;
+    setP1(p1 + center);
+
+    // Rotação no P2
+    utils::Vec4 p2 = getP2() - center;
+    float x2 = p2.x * cosA - p2.y * sinA;
+    float y2 = p2.x * sinA + p2.y * cosA;
+    p2.x = x2;
+    p2.y = y2;
+    setP2(p2 + center);
+
+    // Rotação no P3
+    utils::Vec4 p3 = getP3() - center;
+    float x3 = p3.x * cosA - p3.y * sinA;
+    float y3 = p3.x * sinA + p3.y * cosA;
+    p3.x = x3;
+    p3.y = y3;
+    setP3(p3 + center);
+}
+
+void Triangle::rotationAxisQuaternion(float angle, const utils::Vec4& axis, const utils::Vec4& center) {
+    float rad = angle * (PI / 180.0f);
+
+    utils::Quaternion q = utils::Quaternion::fromAxisAngle(axis, rad);
+
+    // rotacionar P1
+    utils::Vec4 p1 = getP1() - center;
+    p1 = p1.rotateVec(q);
+    setP1(p1 + center);
+
+    // rotacionar P2
+    utils::Vec4 p2 = getP2() - center;
+    p2 = p2.rotateVec(q);
+    setP2(p2 + center);
+
+    // rotacionar P3
+    utils::Vec4 p3 = getP3() - center;
+    p3 = p3.rotateVec(q);
+    setP3(p3 + center);
 }
 
 utils::HitInfo Triangle::intersects(const Ray& ray) const {
