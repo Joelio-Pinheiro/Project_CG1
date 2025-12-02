@@ -16,10 +16,11 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     this->DWindow = DWindow;
     this->nRow = nRow;
     this->nCol = nCol;
-    this->setObserverPosition(0.0f, 0.0f, 0.0f);
 
     this->window->setPosition(0, 0, this->DWindow); 
+    this->setCamera(new Camera());
     this->setAmbientLight(0.3f, 0.3f, 0.3f);
+
 
 
     // Chão
@@ -126,6 +127,8 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     );
     this->meshes.push_back(cube);
     
+    this->camera->move(0.0f, 1.0f, 2.0f);
+    this->camera->rotate(-15.0f, utils::Vec4::Vector(0.0f, 0.0f, 1.0f));
     
     Light *mainLight = new Light(
         -1.0f, 1.4f, -0.2f,
@@ -135,30 +138,46 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     this->lights.push_back(mainLight);
 }
 
-void Scene::setObserverPosition(float x, float y, float z) {
-    this->observerPosition.x = x;
-    this->observerPosition.y = y;
-    this->observerPosition.z = z;
-}
+// void Scene::setObserverPosition(float x, float y, float z) {
+//     this->observerPosition.x = x;
+//     this->observerPosition.y = y;
+//     this->observerPosition.z = z;
+// }
 
 std::vector<SDL_Color> Scene::traceRays() {
+    std::cout << "Camera Eye: "; camera->getEye().print();
+    std::cout << "Camera Forward: "; camera->getForward().print();
+    std::cout << "Camera Up: "; camera->getUp().print();
+    std::cout << "Camera Right: "; camera->getRight().print();
+    std::cout << "DWindow: " << this->DWindow << std::endl;
+
     float Dx = this->WIDTH / this->nCol;
     float Dy = this->HEIGHT / this->nRow;
-
+    
     utils::RGB bgColor  = {0.1f, 0.1f, 0.1f};
-
+    
     std::vector<SDL_Color> canvas(this->nRow * this->nCol, bgColor.toSDLColor()); // armazena todos os pixels com a cor de fundo
-
-    float Z = this->DWindow; // Z coordenada da janela
+    
+    float Z = -this->DWindow; // Z coordenada da janela
     for (int l = 0; l < this->nRow; l++) {
         float Y = this->HEIGHT/2 - Dy/2 - l*Dy; // Y coordenada do pixel
         for(int c = 0; c < this->nCol; c++) {
             float X = -this->WIDTH/2 + Dx/2 + c*Dx; // X coordenada do pixel
+            
+            utils::Vec4 forward = camera->getForward();
+            utils::Vec4 right = camera->getRight();
+            utils::Vec4 up = camera->getUp();
+            
+            
+            utils::Vec4 pixel =
+                camera->getEye()
+                + camera->getForward() * Z     // Z positivo
+                + camera->getRight()   * X
+                + camera->getUp()      * Y;
 
-            utils::Vec4 pixel = utils::Vec4::Point(X, Y, Z);
-            utils::Vec4 dir   = (pixel - this->observerPosition);
-            Ray ray(this->observerPosition, dir);
-
+            utils::Vec4 dir = (pixel - camera->getEye()).normalize();
+            Ray ray(camera->getEye(), dir);
+            
             utils::RGB pixelColor = bgColor;
 
             utils::HitInfo closestHit;
@@ -170,7 +189,7 @@ std::vector<SDL_Color> Scene::traceRays() {
                 utils::HitInfo hitInfo = sphere->intersects(ray);
                 if (hitInfo.hit && hitInfo.t < closestHit.t) {
                     closestHit = hitInfo;
-
+                    
                     utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
                     for(Light* light : this->lights) {
                         totalLight = totalLight + light->ComputeLighting(hitInfo, sphere->getMaterial(), ray.getDirection());
@@ -182,7 +201,7 @@ std::vector<SDL_Color> Scene::traceRays() {
                 utils::HitInfo hitInfo = cylinder->intersects(ray);
                 if (hitInfo.hit && hitInfo.t < closestHit.t) {
                     closestHit = hitInfo;
-
+                    
                     utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
                     for(Light* light : this->lights) {
                         totalLight = totalLight + light->ComputeLighting(hitInfo, cylinder->getMaterial(), ray.getDirection());
@@ -194,7 +213,7 @@ std::vector<SDL_Color> Scene::traceRays() {
                 utils::HitInfo hitInfo = cone->intersects(ray);
                 if (hitInfo.hit && hitInfo.t < closestHit.t) {
                     closestHit = hitInfo;
-
+                    
                     utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
                     for(Light* light : this->lights) {
                         totalLight = totalLight + light->ComputeLighting(hitInfo, cone->getMaterial(), ray.getDirection());
@@ -206,7 +225,7 @@ std::vector<SDL_Color> Scene::traceRays() {
                 utils::HitInfo hitInfo = triangle->intersects(ray);
                 if (hitInfo.hit && hitInfo.t < closestHit.t) {
                     closestHit = hitInfo;
-
+                    
                     utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
                     for(Light* light : this->lights) {
                         totalLight = totalLight + light->ComputeLighting(hitInfo, triangle->getMaterial(), ray.getDirection());
@@ -218,7 +237,7 @@ std::vector<SDL_Color> Scene::traceRays() {
                 utils::HitInfo hitInfo = mesh->intersects(ray);
                 if (hitInfo.hit && hitInfo.t < closestHit.t) {
                     closestHit = hitInfo;
-
+                    
                     utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
                     for(Light* light : this->lights) {
                         totalLight = totalLight + light->ComputeLighting(hitInfo, mesh->getMaterial(), ray.getDirection());
@@ -230,7 +249,7 @@ std::vector<SDL_Color> Scene::traceRays() {
                 utils::HitInfo hitInfo = flat->intersects(ray);
                 if (hitInfo.hit && hitInfo.t < closestHit.t) {
                     closestHit = hitInfo;
-
+                    
                     utils::RGB totalLight = utils::RGB(0.0f, 0.0f, 0.0f);
                     for(Light* light : this->lights) {
                         totalLight = totalLight + light->ComputeLighting(hitInfo, flat->getMaterial(), ray.getDirection());
@@ -244,13 +263,13 @@ std::vector<SDL_Color> Scene::traceRays() {
             canvas[l * this->nCol + c] = pixelColor.toSDLColor();
         }
     }
-
+    
     return canvas;
 }
 
 void Scene::drawCanvas(const std::vector<SDL_Color>& canvas) {
     SDL_Renderer* renderer = window->getRenderer();
-
+    
     SDL_Texture* texture = SDL_CreateTexture(
         renderer,
         SDL_PIXELFORMAT_RGBA8888,

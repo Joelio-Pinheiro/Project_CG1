@@ -21,13 +21,6 @@ int main(int argc, char **argv)
             if (e.type == SDL_QUIT) running = false;
             if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) running = false;
 
-            if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_w) myScene.incrementObserverZ(1.0f);
-            if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_s) myScene.decrementObserverZ(1.0f);
-            if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_d) myScene.incrementObserverX(1.0f);
-            if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_a) myScene.decrementObserverX(1.0f);
-            if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_q) myScene.incrementObserverY(1.0f);
-            if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_e) myScene.decrementObserverY(1.0f);
-            printf("Observer Position: (%.2f, %.2f, %.2f)\n", myScene.getObserverPosition().x, myScene.getObserverPosition().y, myScene.getObserverPosition().z);
         }
         myScene.render();
         

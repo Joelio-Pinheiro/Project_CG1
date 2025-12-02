@@ -1,8 +1,6 @@
 #include "../headers/Triangle.h"
 #include "../headers/utils.h"
 
-const float PI = 3.14159265f;
-
 Triangle::Triangle(utils::Vec4 p1, utils::Vec4 p2, utils::Vec4 p3) {
     setP1(p1);
     setP2(p2);
@@ -87,7 +85,7 @@ void Triangle::reflection(const utils::Vec4& planePoint, const utils::Vec4& plan
 }
 
 void Triangle::rotationX(float angle, const utils::Vec4& center) {
-    float rad = angle * (PI / 180.0f);
+    float rad = angle * (M_PI / 180.0f);
     float cosA = cos(rad);
     float sinA = sin(rad);
 
@@ -117,7 +115,7 @@ void Triangle::rotationX(float angle, const utils::Vec4& center) {
 }
 
 void Triangle::rotationY(float angle, const utils::Vec4& center) {
-    float rad = angle * (PI / 180.0f);
+    float rad = angle * (M_PI / 180.0f);
     float cosA = cos(rad);
     float sinA = sin(rad);
 
@@ -147,7 +145,7 @@ void Triangle::rotationY(float angle, const utils::Vec4& center) {
 }
 
 void Triangle::rotationZ(float angle, const utils::Vec4& center) {
-    float rad = angle * (PI / 180.0f);
+    float rad = angle * (M_PI / 180.0f);
     float cosA = cos(rad);
     float sinA = sin(rad);
 
@@ -177,7 +175,7 @@ void Triangle::rotationZ(float angle, const utils::Vec4& center) {
 }
 
 void Triangle::rotationAxisQuaternion(float angle, const utils::Vec4& axis, const utils::Vec4& center) {
-    float rad = angle * (PI / 180.0f);
+    float rad = angle * (M_PI / 180.0f);
 
     utils::Quaternion q = utils::Quaternion::fromAxisAngle(axis, rad);
 

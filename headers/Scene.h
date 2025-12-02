@@ -12,6 +12,7 @@
 #include "../headers/Ray.h"
 #include "../headers/Light.h"
 #include "../headers/Texture.h"
+#include "../headers/Camera.h"
 #include <vector>
 
 class Light;
@@ -23,8 +24,10 @@ class Scene {
         int nRow;
         int nCol;
         utils::window *window;
-        utils::Vec4 observerPosition;
+        Camera *camera;
         utils::RGB ambientLight = {0.1f, 0.1f, 0.1f};
+
+        // objetos
         std::vector<Sphere*> spheres;
         std::vector<Flat*> flats;
         std::vector<Cylinder*> cylinders;
@@ -34,7 +37,7 @@ class Scene {
         std::vector<Light*> lights;
     public:
         Scene(float width, float height, float DWindow, int nRow, int nCol, utils::window *window);
-        void setObserverPosition(float x, float y, float z);
+        void setCamera(Camera* cam) { this->camera = cam; }
 
         void setAmbientLight(float r, float g, float b) { this->ambientLight = utils::RGB(r, g, b); }
         utils::RGB getAmbientLight() const { return this->ambientLight; }
@@ -45,13 +48,14 @@ class Scene {
         std::vector<Triangle*> getTriangles() const { return this->triangles; }
         std::vector<Mesh*> getMeshes() const { return this->meshes; }
 
-        void incrementObserverZ(float z) { this->observerPosition.z += z; }
-        void incrementObserverX(float x) { this->observerPosition.x += x; }
-        void incrementObserverY(float y) { this->observerPosition.y += y; }
-        void decrementObserverZ(float z) { this->observerPosition.z -= z; }
-        void decrementObserverX(float x) { this->observerPosition.x -= x; }
-        void decrementObserverY(float y) { this->observerPosition.y -= y; }
-        utils::Vec4 getObserverPosition() const { return this->observerPosition; }
+        // void incrementObserverZ(float z) { this->observerPosition.z += z; }
+        // void incrementObserverX(float x) { this->observerPosition.x += x; }
+        // void incrementObserverY(float y) { this->observerPosition.y += y; }
+        // void decrementObserverZ(float z) { this->observerPosition.z -= z; }
+        // void decrementObserverX(float x) { this->observerPosition.x -= x; }
+        // void decrementObserverY(float y) { this->observerPosition.y -= y; }
+        // utils::Vec4 getObserverPosition() const { return this->observerPosition; }
+
         void render();
     private:
         std::vector<SDL_Color> traceRays();

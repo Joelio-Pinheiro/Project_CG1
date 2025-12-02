@@ -1,8 +1,8 @@
 all: main
 
-main: main.cpp build/Texture.o build/Vec4.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Flat.o build/Cylinder.o build/Cone.o build/Triangle.o build/Mesh.o build/Scene.o build/Light.o
+main: main.cpp build/Texture.o build/Vec4.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Flat.o build/Cylinder.o build/Cone.o build/Triangle.o build/Mesh.o build/Camera.o build/Scene.o build/Light.o
 	mkdir -p build
-	g++ main.cpp build/Texture.o build/Vec4.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Flat.o build/Cylinder.o build/Cone.o build/Triangle.o build/Mesh.o build/Scene.o build/Light.o -o main `sdl2-config --cflags --libs` -lSDL2_image -lGLEW -lGL
+	g++ main.cpp build/Texture.o build/Vec4.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Flat.o build/Cylinder.o build/Cone.o build/Triangle.o build/Mesh.o build/Camera.o build/Scene.o build/Light.o -o main `sdl2-config --cflags --libs` -lSDL2_image -lGLEW -lGL
 
 build/Texture.o: Scene/Texture.cpp headers/Texture.h
 	mkdir -p build
@@ -44,6 +44,10 @@ build/Triangle.o: Scene/Triangle.cpp headers/Triangle.h
 build/Mesh.o: Scene/Mesh.cpp headers/Mesh.h
 	mkdir -p build
 	g++ -c Scene/Mesh.cpp -o build/Mesh.o `sdl2-config --cflags`
+
+build/Camera.o: Scene/Camera.cpp headers/Camera.h
+	mkdir -p build
+	g++ -c Scene/Camera.cpp -o build/Camera.o `sdl2-config --cflags`
 
 build/Scene.o: Scene/Scene.cpp headers/Scene.h
 	mkdir -p build
