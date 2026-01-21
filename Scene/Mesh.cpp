@@ -77,18 +77,18 @@ utils::HitInfo Mesh::intersects(const Ray& ray) const {
     closestHit.hit = false;
     closestHit.t = std::numeric_limits<float>::max();
 
-    // Triangle* triangle1;
+    Triangle* triangle1;
 
     for (const Triangle* triangle : this->triangles) {
         utils::HitInfo hitInfo = triangle->intersects(ray);
         if (hitInfo.hit && hitInfo.t < closestHit.t) {
             closestHit = hitInfo;
-            // triangle1 = const_cast<Triangle*>(triangle);
+            triangle1 = const_cast<Triangle*>(triangle);
         }
     }
-    // std::cout << "Vertice 1: "; triangle1->getP1().print();
-    // std::cout << "Vertice 2: "; triangle1->getP2().print();
-    // std::cout << "Vertice 3: "; triangle1->getP3().print();
+    std::cout << "Vertice 1: "; triangle1->getP1().print();
+    std::cout << "Vertice 2: "; triangle1->getP2().print();
+    std::cout << "Vertice 3: "; triangle1->getP3().print();
 
     closestHit.type = "Mesh";
     return closestHit;

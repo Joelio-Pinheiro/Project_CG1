@@ -19,8 +19,7 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
 
     this->window->setPosition(0, 0, this->DWindow); 
     this->setCamera(new Camera());
-    this->setAmbientLight(0.3f, 0.3f, 0.3f);
-    // this->setAmbientLight(0.0f, 0.0f, 0.0f);
+    this->setAmbientLight(0.0f, 0.0f, 0.0f);
     float K = 7.0f;
     utils::Vec4 C2, C3, C4, C5;
 
