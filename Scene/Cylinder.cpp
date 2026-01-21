@@ -22,6 +22,18 @@ void Cylinder::setDiffuse(float r, float g, float b) {
 void Cylinder::setSpecular(float r, float g, float b) {
     this->material.setSpecular(r, g, b);
 }
+void Cylinder::setShininess(float shininess) {
+    this->material.setShininess(shininess);
+}
+void Cylinder::scale(float s, const utils::Vec4& center) {
+    // Escala o raio e a altura
+    this->radius *= s;
+    this->height *= s;
+
+    // Escala o centro da base em relação ao ponto center
+    utils::Vec4 dirToBase = this->baseCenter - center;
+    this->baseCenter = center + dirToBase * s;
+}
 
 utils::HitInfo Cylinder::intersects(const Ray& ray) const{
     utils::HitInfo info;
@@ -109,5 +121,6 @@ utils::HitInfo Cylinder::intersects(const Ray& ray) const{
     info.v = fmodf(info.point.z * 0.2f, 1.0f);
     if (info.u < 0) info.u += 1.0f;
     if (info.v < 0) info.v += 1.0f;
+    info.type = "Cylinder";
     return info;
 }

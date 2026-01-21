@@ -21,10 +21,27 @@ void Triangle::translation(const utils::Vec4& translation) {
     setP2(getP2() + translation);
     setP3(getP3() + translation);
 }
-void Triangle::scale(float s, const utils::Vec4& center) {
-    setP1((getP1() - center) * s + center);
-    setP2((getP2() - center) * s + center);
-    setP3((getP3() - center) * s + center);
+void Triangle::scale(float sx, float sy, float sz, const utils::Vec4& center) {
+    // Escala no P1
+    utils::Vec4 p1 = getP1() - center;
+    p1.x *= sx;
+    p1.y *= sy;
+    p1.z *= sz;
+    setP1(p1 + center);
+
+    // Escala no P2
+    utils::Vec4 p2 = getP2() - center;
+    p2.x *= sx;
+    p2.y *= sy;
+    p2.z *= sz;
+    setP2(p2 + center);
+
+    // Escala no P3
+    utils::Vec4 p3 = getP3() - center;
+    p3.x *= sx;
+    p3.y *= sy;
+    p3.z *= sz;
+    setP3(p3 + center);
 }
 void Triangle::shear(float shXY, float shXZ, float shYX, float shYZ, float shZX, float shZY, const utils::Vec4& center) {
     // Cisalhamento no P1
@@ -145,9 +162,9 @@ void Triangle::rotationY(float angle, const utils::Vec4& center) {
 }
 
 void Triangle::rotationZ(float angle, const utils::Vec4& center) {
-    float rad = angle * (M_PI / 180.0f);
-    float cosA = cos(rad);
-    float sinA = sin(rad);
+    // float rad = angle * (M_PI / 180.0f);
+    float cosA = cos(angle);
+    float sinA = sin(angle);
 
     // Rotação no P1
     utils::Vec4 p1 = getP1() - center;
@@ -203,14 +220,20 @@ utils::HitInfo Triangle::intersects(const Ray& ray) const {
     utils::Vec4 p1 = getP1();
     utils::Vec4 p2 = getP2();
     utils::Vec4 p3 = getP3();
+    // std::cout << "Triangle P1: "; p1.print();
+    // std::cout << "Triangle P2: "; p2.print();
+    // std::cout << "Triangle P3: "; p3.print();
 
     // 1) Calcular os vetores de direção saindo de p1
     utils::Vec4 r1 = p2 - p1;
+    // std::cout << "Triangle R1: "; r1.print();
     utils::Vec4 r2 = p3 - p1;
+    // std::cout << "Triangle R2: "; r2.print();
 
     // 2) Calcular a normal do triângulo
-    utils::Vec4 N = r2.prodVectorial(r1);
+    utils::Vec4 N = r1.prodVectorial(r2);
     utils::Vec4 normal = N.normalize();
+    // std::cout << "Triangle Normal: "; normal.print();
 
 
     // 3) Calcular o ponto de interseção do raio com o plano do triângulo
@@ -254,5 +277,6 @@ utils::HitInfo Triangle::intersects(const Ray& ray) const {
         if (hitInfo.v < 0) hitInfo.v += 1.0f;
     }
 
+    hitInfo.type = "Triangle";    
     return hitInfo;
 }

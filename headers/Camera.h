@@ -4,24 +4,6 @@
 #include "../headers/Ray.h"
 #include <vector>
 
-// class Camera {
-//     private:
-//         utils::Vec4 eye; // posiçao da camera
-//         utils::Vec4 lookAt; //ponto que a camera esta olhando
-//         utils::Vec4 upPoint; // ponto acima da camera
-//     public:
-//         Camera();
-
-//         void rotateAroundEye(float angleDeg, const utils::Vec4& axis);
-//         void rotateAroundLookAt(float angleDeg, const utils::Vec4& axis);
-//         void move(float dx, float dy, float dz);
-
-//         utils::Vec4 getForward() const;
-//         utils::Vec4 getUp() const;
-//         utils::Vec4 getRight() const;
-
-//         utils::Vec4 getEye() const { return this->eye; }
-// };
 
 class Camera {
     private:

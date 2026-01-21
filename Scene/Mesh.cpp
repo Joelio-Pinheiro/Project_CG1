@@ -19,6 +19,9 @@ void Mesh::setDiffuse(float r, float g, float b) {
 void Mesh::setSpecular(float r, float g, float b) {
     this->material.setSpecular(r, g, b);
 }
+void Mesh::setShininess(float shininess) {
+    this->material.setShininess(shininess);
+}
 
 void Mesh::addTriangle(const utils::Vec4& p1, const utils::Vec4& p2, const utils::Vec4& p3) {
     Triangle* triangle = new Triangle(p1, p2, p3);
@@ -33,9 +36,9 @@ void Mesh::translation(const utils::Vec4& t) {
         triangle->translation(t);
     }
 }
-void Mesh::scale(float s, const utils::Vec4& center) {
+void Mesh::scale(float sx, float sy, float sz, const utils::Vec4& center) {
     for (Triangle* triangle : this->triangles) {
-        triangle->scale(s, center);
+        triangle->scale(sx, sy, sz, center);
     }
 }
 void Mesh::shear(float shXY, float shXZ, float shYX, float shYZ, float shZX, float shZY, const utils::Vec4& center) {
@@ -74,13 +77,20 @@ utils::HitInfo Mesh::intersects(const Ray& ray) const {
     closestHit.hit = false;
     closestHit.t = std::numeric_limits<float>::max();
 
+    // Triangle* triangle1;
+
     for (const Triangle* triangle : this->triangles) {
         utils::HitInfo hitInfo = triangle->intersects(ray);
         if (hitInfo.hit && hitInfo.t < closestHit.t) {
             closestHit = hitInfo;
+            // triangle1 = const_cast<Triangle*>(triangle);
         }
     }
+    // std::cout << "Vertice 1: "; triangle1->getP1().print();
+    // std::cout << "Vertice 2: "; triangle1->getP2().print();
+    // std::cout << "Vertice 3: "; triangle1->getP3().print();
 
+    closestHit.type = "Mesh";
     return closestHit;
 }
 

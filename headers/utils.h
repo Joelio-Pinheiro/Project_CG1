@@ -6,6 +6,7 @@
 #include <cmath>
 #include <SDL.h>
 #include <SDL2/SDL_image.h>
+#include <string>
 
 class Texture;
 namespace utils {
@@ -36,6 +37,8 @@ namespace utils {
 
         float u; // Coordenada u para mapeamento UV
         float v; // Coordenada v para mapeamento UV
+
+        std::string type = "";
     };
     struct RGB {
         float r, g, b;

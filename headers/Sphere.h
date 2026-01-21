@@ -22,6 +22,15 @@ class Sphere {
         utils::Vec4 getCenter() const;
         float getRadius();
         utils::HitInfo intersects(const Ray& ray) const;
+
+        void scale(float s, const utils::Vec4& center) {
+            radius *= s;
+            this->center = center + (this->center - center) * s;
+        };
+
+        void translation(const utils::Vec4& t) {
+            center = center + t;
+        };
 };
 
 #endif // BALL_H

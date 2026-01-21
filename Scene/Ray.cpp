@@ -13,7 +13,7 @@ utils::Vec4 Ray::getOrigin() const {
 }
 
 utils::Vec4 Ray::getDirection() const {
-    return dirVector;
+    return dirVector.normalize();
 }
 
 // P(t) = P0 + t * dr

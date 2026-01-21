@@ -29,6 +29,9 @@ void Cone::setDiffuse(float r, float g, float b) {
 void Cone::setSpecular(float r, float g, float b) {
     this->material.setSpecular(r, g, b);
 }
+void Cone::setShininess(float shininess) {
+    this->material.setShininess(shininess);
+}
 
 
 utils::HitInfo Cone::intersects(const Ray& ray) const {
@@ -118,6 +121,7 @@ utils::HitInfo Cone::intersects(const Ray& ray) const {
     hitInfo.v = fmodf(hitInfo.point.z * 0.2f, 1.0f);
     if (hitInfo.u < 0) hitInfo.u += 1.0f;
     if (hitInfo.v < 0) hitInfo.v += 1.0f;
+    hitInfo.type = "Cone";
 
     return hitInfo;
 }

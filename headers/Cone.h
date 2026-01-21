@@ -28,6 +28,7 @@ class Cone {
         void setVertex(utils::Vec4 vertex);
         void setDiffuse(float r, float g, float b);
         void setSpecular(float r, float g, float b);
+        void setShininess(float shininess);
         utils::Material getMaterial() const { return this->material; }
         utils::Vec4 getBaseCenter() const { return baseCenter; };
         utils::Vec4 getDirection() const { return direction; };
@@ -36,6 +37,18 @@ class Cone {
         float getHeight() const { return height; };
         bool isCapped() const { return capped; };
         utils::HitInfo intersects(const Ray& ray) const;
+
+        void scale(float s, const utils::Vec4& center) {
+            baseCenter = center + (baseCenter - center) * s;
+            vertex = center + (vertex - center) * s;
+            radius *= s;
+            height *= s;
+        };
+
+        void translation(const utils::Vec4& t) {
+            baseCenter = baseCenter + t;
+            vertex = vertex + t;
+        };
 };
 
 #endif // CONE_H

@@ -20,136 +20,141 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     this->window->setPosition(0, 0, this->DWindow); 
     this->setCamera(new Camera());
     this->setAmbientLight(0.3f, 0.3f, 0.3f);
+    // this->setAmbientLight(0.0f, 0.0f, 0.0f);
+    float K = 7.0f;
+    utils::Vec4 C2, C3, C4, C5;
 
 
-
-    // Chão
+    // Plano OBJ1
     Flat *floor = new Flat(
-        utils::Vec4::Point(0.0f, -1.5f, 0.0f),
-        utils::Vec4::Vector(0.0f, 1.0f, 0.0f)
+        utils::Vec4::Point(0.0f, 0.0f, 0.0f),
+        utils::Vec4::Vector(0.0f, 0.0f, 1.0f)
     );
-    Texture* floorTexture = new Texture("models/madeira.png");
-    utils::Material floorMat;
-
-    floorMat.setTexture(floorTexture);
-    floorMat.setShininess(2.0f);
-    floor->setMaterial(floorMat);
+    floor->setDiffuse(0.5f, 0.25f, 0.5f);
+    floor->setSpecular(0.5f, 0.25f, 0.5f);
+    floor->setShininess(2.0f);
     this->flats.push_back(floor);
-    
-    // Parede lateral direita
-    Flat *rightWall = new Flat(
-        utils::Vec4::Point(2.0f, -1.5f, 0.0f),
-        utils::Vec4::Vector(-1.0f, 0.0f, 0.0f)
+
+
+    // Anel Cilindrico OBJ2
+    C2  = utils::Vec4::Point(100 - K, 200 + K, 0); 
+    float R2 = 10.0f + K;
+    float H2 = 5.0f + 20.0f * K;
+
+    Cylinder *cylinder = new Cylinder(
+        1.0f * R2,
+        1.0f * H2,
+        C2,
+        utils::Vec4::Vector(0.0f, 1.0f, 0.0f),
+        true
     );
-    rightWall->setDiffuse(0.686f, 0.933f, 0.933f);
-    rightWall->setSpecular(0.686f, 0.933f, 0.933f);
-    rightWall->setShininess(2.0f);
-    this->flats.push_back(rightWall);
+    cylinder->setDiffuse(0.5f, 0.25f, 0.5f);
+    cylinder->setSpecular(0.5f, 0.25f, 0.5f);
+    cylinder->setShininess(2.0f);
+    this->cylinders.push_back(cylinder);
 
-    // PAREDE 
-    Flat *frontWall = new Flat(
-        utils::Vec4::Point(0.0f, -1.5f, 2.0f),
-        utils::Vec4::Vector(0.0f, 0.0f, -1.0f)
+    // Esfera OBJ3
+    C3 = utils::Vec4::Point(100 - K, 200 + K, 20 * K - R2/4);
+    float R3 = 20 + K; 
+    Sphere *sphere1 = new Sphere(
+        1.0f * R3,
+        C3.x, C3.y, C3.z
     );
-    frontWall->setDiffuse(0.686f, 0.933f, 0.933f);
-    frontWall->setSpecular(0.686f, 0.933f, 0.933f);
-    this->flats.push_back(frontWall);
+    sphere1->setDiffuse(0.5f, 0.25f, 0.5f);
+    sphere1->setSpecular(0.5f, 0.25f, 0.5f);
+    sphere1->setShininess(2.0f);
+    this->spheres.push_back(sphere1);    
 
-    // PAREDE LATERAL ESQUERDA
-    Flat *leftWall = new Flat(
-        utils::Vec4::Point(-2.0f, -1.5f, 0.0f),
-        utils::Vec4::Vector(1.0f, 0.0f, 0.0f)
+    // Cone de Base aberta OBJ4
+    C4 = utils::Vec4::Point(200 + K, 100 - K, 0);
+    float R4 = 30.0f + K;
+    float H4 = 10.0f + 50.0f * K;
+    Cone *cone = new Cone(
+        1.0f * R4,
+        1.0f * H4,
+        C4,
+        utils::Vec4::Vector(1.0f, 0.0f, 0.0f),
+        false
     );
-    leftWall->setDiffuse(0.686f, 0.933f, 0.933f);
-    leftWall->setSpecular(0.686f, 0.933f, 0.933f);
-    this->flats.push_back(leftWall);
+    cone->setDiffuse(0.5f, 0.25f, 0.5f);
+    cone->setSpecular(0.5f, 0.25f, 0.5f);
+    cone->setShininess(2.0f);
+    this->cones.push_back(cone);
 
-    // TETO
-    Flat *ceiling = new Flat(
-        utils::Vec4::Point(0.0f, 1.5f, 0.0f),
-        utils::Vec4::Vector(0.0f, -1.0f, 0.0f)
-    );
-    ceiling->setDiffuse(0.933f, 0.933f, 0.933f);
-    ceiling->setSpecular(0.933f, 0.933f, 0.933f);
-    this->flats.push_back(ceiling);
-    // CUBO
-    utils::Vec4 baseCenter = utils::Vec4::Point(0.0f, -1.5f, -1.65f);
-    float a = 0.5f; // metade da aresta basica
+    // Pirâmide reta de base quadrada OBJ5
+    C5 = utils::Vec4::Point(200 + K, 200 + K, 0);
+    float L5 = 5.0f ;
+    float H5 = 20.0f + 20.0f * K;
+    float delta = M_PI / 5; // para girar a pirâmide um pouco
 
-    std::vector<utils::Vec4> cubeVerts = {
-        // base (y = 0)
-        utils::Vec4::Point(-a, 0.0f, -a),
-        utils::Vec4::Point(a, 0.0f, -a),
-        utils::Vec4::Point(a, 0.0f, a),
-        utils::Vec4::Point(-a, 0.0f, a),
-
-        // topo (y = 1 porque aresta=1 no espaço local)
-        utils::Vec4::Point(-a, 1.0f, -a),
-        utils::Vec4::Point(a, 1.0f, -a),
-        utils::Vec4::Point(a, 1.0f, a),
-        utils::Vec4::Point(-a, 1.0f, a)
-    };
-    // indices dos triângulos
-    std::vector<unsigned int> cubeIndices = {
-        0,1,2,  0,2,3,
-        4,5,6,  4,6,7,
-        0,1,5,  0,5,4,
-        3,2,6,  3,6,7,
-        0,3,7,  0,7,4,
-        1,2,6,  1,6,5
+    std::vector<utils::Vec4> verts = {
+        utils::Vec4::Point(-0.5f, -0.5f, 0.0f), // B1 - 0
+        utils::Vec4::Point( 0.5f, -0.5f, 0.0f), // B2 - 1
+        utils::Vec4::Point( 0.5f,  0.5f, 0.0f), // B3 - 2
+        utils::Vec4::Point(-0.5f,  0.5f, 0.0f), // B4 - 3
+        utils::Vec4::Point( 0.0f,  0.0f, 1.0f)  // V  - 4
     };
     
-    Mesh *cube = new Mesh(cubeVerts, cubeIndices);
-    utils::Material blueMat;
-    blueMat.diffuse = {1.0f, 0.078f, 0.576f};
-    blueMat.specular = {1.0f, 0.078f, 0.576f};
-    cube->setMaterial(blueMat);
 
-    // Transformações no cubo
-    utils::Vec4 modelCenter = utils::Vec4::Point(0.0f, 0.5f, 0.0f);
-    cube->scale(1.2f, modelCenter); 
-    cube->shear(0.3f, 0.0f, 0.0f,
-            0.0f, 0.0f, 0.0f,
-            modelCenter);      
-    utils::Vec4 worldPos = utils::Vec4::Vector(0.0f, -2.5f, -1.65f - 1.5f); 
-    cube->translation(worldPos);
-    cube->reflection(
-        utils::Vec4::Point(0.0f, -1.5f, 0.0f),
-        utils::Vec4::Vector(0.0f, 1.0f, 0.0f) 
-    );
-    // cube->rotationY(25.0f, modelCenter + worldPos);
-    // cube->rotationX(15.0f, modelCenter + worldPos);
-    // cube->rotationZ(10.0f, modelCenter + worldPos);
-    cube->rotationAxisQuaternion(
-        25.0f,
-        utils::Vec4::Vector(1.0f, 1.0f, 0.0f),
-        worldPos
-    );
-    this->meshes.push_back(cube);
-    
-    this->camera->move(0.0f, 1.0f, 2.0f);
-    this->camera->rotate(-15.0f, utils::Vec4::Vector(0.0f, 0.0f, 1.0f));
-    
+    // Índices dos triângulos
+    std::vector<unsigned int> indices = {
+        // Base (2 triângulos)
+        0, 1, 2,
+        0, 2, 3,
+
+        // Faces laterais (4 triângulos)
+        4, 0, 1,
+        4, 1, 2,
+        4, 2, 3,
+        4, 3, 0
+    };
+    Mesh *pyramid = new Mesh(verts, indices);
+    pyramid->setDiffuse(0.5f, 0.25f, 0.5f);
+    pyramid->setSpecular(0.5f, 0.25f, 0.5f);
+    pyramid->setShininess(2.0f);
+    this->meshes.push_back(pyramid);
+
+    utils::Vec4 p1 = utils::Vec4::Point(-0.5f,  0.5f, 0.0f);
+    p1.x *= L5;
+    p1.y *= L5;
+    p1.z *= H5;
+
+
+    float rad = delta * (M_PI / 180.0f);
+    float cosA = cos(rad);
+    float sinA = sin(rad);
+
+    // Rotação no P1
+    float x1 = p1.x * cosA - p1.y * sinA;
+    float y1 = p1.x * sinA + p1.y * cosA;
+    p1.x = x1;
+    p1.y = y1;
+
+    //translation
+    p1 = p1 + C5;
+    std::cout << "Piramide Vertice 1 escalado: "; p1.print();
+
+    // Transformações dos objetos para suas posições corretas
+    // OBJ5
+    pyramid->scale(L5, L5, H5, utils::Vec4::Point(0.0f, 0.0f, 0.0f));
+    pyramid->rotationZ(delta, utils::Vec4::Point(0.0f, 0.0f, 0.0f));
+    pyramid->translation(C5);
+
     Light *mainLight = new Light(
-        -1.0f, 1.4f, -0.2f,
-        utils::RGB(0.7f, 0.7f, 0.7f),
+        300.0f, 300.0f, 1000.0f,
+        utils::RGB(1.0f, 1.0f, 1.0f),
         this
     );
     this->lights.push_back(mainLight);
+
 }
 
-// void Scene::setObserverPosition(float x, float y, float z) {
-//     this->observerPosition.x = x;
-//     this->observerPosition.y = y;
-//     this->observerPosition.z = z;
-// }
-
 std::vector<SDL_Color> Scene::traceRays() {
-    std::cout << "Camera Eye: "; camera->getEye().print();
-    std::cout << "Camera Forward: "; camera->getForward().print();
-    std::cout << "Camera Up: "; camera->getUp().print();
-    std::cout << "Camera Right: "; camera->getRight().print();
-    std::cout << "DWindow: " << this->DWindow << std::endl;
+    // std::cout << "Camera Eye: "; camera->getEye().print();
+    // std::cout << "Camera Forward: "; camera->getForward().print();
+    // std::cout << "Camera Up: "; camera->getUp().print();
+    // std::cout << "Camera Right: "; camera->getRight().print();
+    // std::cout << "DWindow: " << this->DWindow << std::endl;
 
     float Dx = this->WIDTH / this->nCol;
     float Dy = this->HEIGHT / this->nRow;
@@ -158,15 +163,11 @@ std::vector<SDL_Color> Scene::traceRays() {
     
     std::vector<SDL_Color> canvas(this->nRow * this->nCol, bgColor.toSDLColor()); // armazena todos os pixels com a cor de fundo
     
-    float Z = -this->DWindow; // Z coordenada da janela
+    float Z = this->DWindow; // Z coordenada da janela
     for (int l = 0; l < this->nRow; l++) {
         float Y = this->HEIGHT/2 - Dy/2 - l*Dy; // Y coordenada do pixel
         for(int c = 0; c < this->nCol; c++) {
             float X = -this->WIDTH/2 + Dx/2 + c*Dx; // X coordenada do pixel
-            
-            utils::Vec4 forward = camera->getForward();
-            utils::Vec4 right = camera->getRight();
-            utils::Vec4 up = camera->getUp();
             
             
             utils::Vec4 pixel =
@@ -300,4 +301,52 @@ void Scene::drawCanvas(const std::vector<SDL_Color>& canvas) {
 void Scene::render() {
     std::vector<SDL_Color> canvas = this->traceRays();
     this->drawCanvas(canvas);
+}
+
+utils::RGB Scene::renderCalcRGB() {
+    utils::Vec4 dir = (camera->getForward()).normalize();
+
+    std::cout << "Direction: "; dir.print();
+    std::cout << "Eye: "; camera->getEye().print();
+
+    Ray ray(camera->getEye(), dir);
+
+    utils::HitInfo closestHit;
+    closestHit.hit = false;
+    closestHit.t = std::numeric_limits<float>::max();
+    utils::Material mat;
+
+    auto tryHit = [&](const utils::HitInfo& hit, const utils::Material& m)
+    {
+        if (hit.hit && hit.t < closestHit.t)
+        {
+            closestHit = hit;
+            mat = m;
+        }
+    };
+
+    // Testar todos os objetos
+    // for (Sphere* s : spheres)          tryHit(s->intersects(ray), s->getMaterial());
+    // for (Cylinder* c : cylinders)      tryHit(c->intersects(ray), c->getMaterial());
+    // for (Cone* c : cones)             tryHit(c->intersects(ray), c->getMaterial());
+    // for (Triangle* t : triangles)      tryHit(t->intersects(ray), t->getMaterial());
+    for (Mesh* m : meshes)             tryHit(m->intersects(ray), m->getMaterial());
+    // for (Flat* f : flats)              tryHit(f->intersects(ray), f->getMaterial());
+
+
+    if (!closestHit.hit)
+        return utils::RGB(0.0f, 0.0f, 0.0f);
+
+
+    utils::RGB total = utils::RGB(0,0,0);
+
+    for (Light* L : lights)
+        total = total + L->ComputeLighting(closestHit, mat, dir);
+
+    std::cout << "\nType: " << closestHit.type << std::endl;
+    std::cout << "Hit at t=" << closestHit.t << "\n";
+    std::cout << "Hit Point: "; closestHit.point.print();
+    std::cout << "Normal: "; closestHit.normal.print();
+
+    return total;
 }

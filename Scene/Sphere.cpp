@@ -67,6 +67,7 @@ utils::HitInfo Sphere::intersects(const Ray& ray) const{
         if (info.u < 0) info.u += 1.0f;
         if (info.v < 0) info.v += 1.0f;
     }
+    info.type = "Sphere";
 
     return info;
 }

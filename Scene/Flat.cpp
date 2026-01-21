@@ -45,5 +45,6 @@ utils::HitInfo Flat::intersects(const Ray& ray) const {
             if (info.v < 0) info.v += 1.0f;
         }
     }
+    info.type = "Flat";
     return info;
 }

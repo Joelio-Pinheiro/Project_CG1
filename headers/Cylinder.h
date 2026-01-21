@@ -22,6 +22,7 @@ class Cylinder {
         void setDirection(utils::Vec4 direction);
         void setDiffuse(float r, float g, float b);
         void setSpecular(float r, float g, float b);
+        void setShininess(float shininess);
         utils::Material getMaterial() const { return this->material; }
         utils::Vec4 getBaseCenter() const { return baseCenter; };
         utils::Vec4 getDirection() const { return direction; };
@@ -29,6 +30,11 @@ class Cylinder {
         float getHeight() const { return height; };
         bool isCapped() const { return capped; };
         utils::HitInfo intersects(const Ray& ray) const;
+
+        void scale(float s, const utils::Vec4& center);
+        void translation(const utils::Vec4& translation) {
+            this->baseCenter = this->baseCenter + translation;
+        }
 };
 
 #endif // CYLINDER_H

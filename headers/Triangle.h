@@ -23,7 +23,7 @@ class Triangle {
         void setMaterial(const utils::Material& material) { this->material = material; }
 
         void translation(const utils::Vec4& translation);
-        void scale(float s, const utils::Vec4& center);
+        void scale(float sx, float sy, float sz, const utils::Vec4& center);
         void shear(float shXY, float shXZ, float shYX, float shYZ, float shZX, float shZY, const utils::Vec4& center);
         void reflection(const utils::Vec4& planePoint, const utils::Vec4& planeNormal);
         void rotationX(float angle, const utils::Vec4& center);

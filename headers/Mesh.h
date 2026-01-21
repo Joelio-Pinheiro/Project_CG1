@@ -19,6 +19,7 @@ class Mesh {
 
         void setDiffuse(float r, float g, float b);
         void setSpecular(float r, float g, float b);
+        void setShininess(float shininess);
         void setMaterial(const utils::Material& material) { this->material = material; }
 
         utils::Material getMaterial() const { return this->material; }
@@ -30,7 +31,7 @@ class Mesh {
         bool loadFromOBJ(const std::string& filepath);
 
         void translation(const utils::Vec4& t);
-        void scale(float s, const utils::Vec4& center);
+        void scale(float sx, float sy, float sz, const utils::Vec4& center);
         void rotationX(float angle, const utils::Vec4& center);
         void rotationY(float angle, const utils::Vec4& center);
         void rotationZ(float angle, const utils::Vec4& center);
