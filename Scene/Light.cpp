@@ -14,13 +14,9 @@ Light::Light(float x, float y, float z, utils::RGB intensity, Scene* scene) {
 
 utils::RGB Light::ComputeLighting(const utils::HitInfo& hitInfo, const utils::Material& material, const utils::Vec4& RayDirection) {
     utils::Vec4 normal =  hitInfo.normal; // N = (Pi - C) / |Pi - C|
-    // std::cout << "Hit Normal: "; normal.print();
     utils::Vec4 lightDir = (this->positionF - hitInfo.point).normalize(); // L = (PF - Pi) / |PF - Pi|
-    // std::cout << "Light Direction: "; lightDir.print();
     utils::Vec4 viewDir  = (RayDirection * -1).normalize(); // V = -dr
-    // std::cout << "View Direction: "; viewDir.print();
     utils::Vec4 reflectDir = ((normal * (2.0f * normal.dot(lightDir))) - lightDir).normalize(); // R = 2(N . L)N - L
-    // std::cout << "Reflect Direction: "; reflectDir.print();
 
     utils::RGB colorDifuse = material.getDiffuse();
     utils::RGB colorSpecular = material.getSpecular();
@@ -34,7 +30,6 @@ utils::RGB Light::ComputeLighting(const utils::HitInfo& hitInfo, const utils::Ma
 
     // Componente ambiente
     utils::RGB ambientF = this->ambientLight.AtSign(colorDifuse); // Iamb @ Eamb
-    // std::cout << "Ambient: " << ambientF.r << ", " << ambientF.g << ", " << ambientF.b << std::endl;
 
     utils::RGB finalColor = ambientF;
     bool shadowColor = this->Shadow(hitInfo, lightDir);
@@ -45,12 +40,10 @@ utils::RGB Light::ComputeLighting(const utils::HitInfo& hitInfo, const utils::Ma
     // Componente difusa
     float ndotl = std::max(normal.dot(lightDir), 0.0f);
     utils::RGB diffuseF = this->intensityF.AtSign(colorDifuse) * ndotl; // IF @ Edif * (N . L)
-    // std::cout << "Diffuse: " << diffuseF.r << ", " << diffuseF.g << ", " << diffuseF.b << std::endl;
 
     // Componente especular
     float spec = std::pow(std::max(reflectDir.dot(viewDir), 0.0f), shininess); // spec = (R . V)^n
     utils::RGB specularF = this->intensityF.AtSign(colorSpecular) * spec; // IF @ Espec * spec
-    // std::cout << "Specular: " << specularF.r << ", " << specularF.g << ", " << specularF.b << std::endl;
 
     finalColor = finalColor + diffuseF + specularF;
     finalColor = utils::RGB(
@@ -58,7 +51,6 @@ utils::RGB Light::ComputeLighting(const utils::HitInfo& hitInfo, const utils::Ma
         utils::RGB::clamp(finalColor.g, 0.0f, 1.0f),
         utils::RGB::clamp(finalColor.b, 0.0f, 1.0f)
     );
-    // std::cout << "Final Color: " << finalColor.r << ", " << finalColor.g << ", " << finalColor.b << std::endl;
     return finalColor;
 }
 

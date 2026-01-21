@@ -6,23 +6,7 @@ Camera::Camera() {
     setEye(utils::Vec4::Point(0,0,0));
     setForward(utils::Vec4::Vector(0,0,-1));
     setUp(utils::Vec4::Vector(0,1,0));
-    // float K = 7.0f;
-
-    // setEye(utils::Vec4::Point(
-        // 500 * cos((M_PI/18) * K),
-        // 500 * sin((M_PI/18) * K),
-        // 10 + 30 * K));
-
-    // float delta = (int)K % 4;
-    // utils::Vec4 Pat;
-    // Pat = utils::Vec4::Point(
-        // 200 + K,
-        // 200 + K, 
-        // 5 * delta * (1 + K));
-    // std::cout << "Pat: "; Pat.print();
-
-    // setUp(utils::Vec4::Vector(0, 1, 0));
-    // setForward((Pat - getEye()).normalize());
+    
     this->reorthogonalize();
 }
 

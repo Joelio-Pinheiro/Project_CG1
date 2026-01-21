@@ -57,7 +57,6 @@ class Scene {
         // utils::Vec4 getObserverPosition() const { return this->observerPosition; }
 
         void render();
-        utils::RGB renderCalcRGB();
     private:
         std::vector<SDL_Color> traceRays();
         void drawCanvas(const std::vector<SDL_Color>& canvas);

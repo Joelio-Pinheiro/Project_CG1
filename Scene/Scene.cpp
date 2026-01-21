@@ -20,7 +20,6 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     this->window->setPosition(0, 0, this->DWindow); 
     this->setCamera(new Camera());
     this->setAmbientLight(0.3f, 0.3f, 0.3f);
-    // this->setAmbientLight(0.0f, 0.0f, 0.0f);
     float K = 7.0f;
     utils::Vec4 C2, C3, C4, C5;
 
@@ -301,52 +300,4 @@ void Scene::drawCanvas(const std::vector<SDL_Color>& canvas) {
 void Scene::render() {
     std::vector<SDL_Color> canvas = this->traceRays();
     this->drawCanvas(canvas);
-}
-
-utils::RGB Scene::renderCalcRGB() {
-    utils::Vec4 dir = (camera->getForward()).normalize();
-
-    std::cout << "Direction: "; dir.print();
-    std::cout << "Eye: "; camera->getEye().print();
-
-    Ray ray(camera->getEye(), dir);
-
-    utils::HitInfo closestHit;
-    closestHit.hit = false;
-    closestHit.t = std::numeric_limits<float>::max();
-    utils::Material mat;
-
-    auto tryHit = [&](const utils::HitInfo& hit, const utils::Material& m)
-    {
-        if (hit.hit && hit.t < closestHit.t)
-        {
-            closestHit = hit;
-            mat = m;
-        }
-    };
-
-    // Testar todos os objetos
-    // for (Sphere* s : spheres)          tryHit(s->intersects(ray), s->getMaterial());
-    // for (Cylinder* c : cylinders)      tryHit(c->intersects(ray), c->getMaterial());
-    // for (Cone* c : cones)             tryHit(c->intersects(ray), c->getMaterial());
-    // for (Triangle* t : triangles)      tryHit(t->intersects(ray), t->getMaterial());
-    for (Mesh* m : meshes)             tryHit(m->intersects(ray), m->getMaterial());
-    // for (Flat* f : flats)              tryHit(f->intersects(ray), f->getMaterial());
-
-
-    if (!closestHit.hit)
-        return utils::RGB(0.0f, 0.0f, 0.0f);
-
-
-    utils::RGB total = utils::RGB(0,0,0);
-
-    for (Light* L : lights)
-        total = total + L->ComputeLighting(closestHit, mat, dir);
-
-    std::cout << "\nType: " << closestHit.type << std::endl;
-    std::cout << "Hit at t=" << closestHit.t << "\n";
-    std::cout << "Hit Point: "; closestHit.point.print();
-    std::cout << "Normal: "; closestHit.normal.print();
-
-    return total;
 }

@@ -162,9 +162,9 @@ void Triangle::rotationY(float angle, const utils::Vec4& center) {
 }
 
 void Triangle::rotationZ(float angle, const utils::Vec4& center) {
-    // float rad = angle * (M_PI / 180.0f);
-    float cosA = cos(angle);
-    float sinA = sin(angle);
+    float rad = angle * (M_PI / 180.0f);
+    float cosA = cos(rad);
+    float sinA = sin(rad);
 
     // Rotação no P1
     utils::Vec4 p1 = getP1() - center;
@@ -220,20 +220,14 @@ utils::HitInfo Triangle::intersects(const Ray& ray) const {
     utils::Vec4 p1 = getP1();
     utils::Vec4 p2 = getP2();
     utils::Vec4 p3 = getP3();
-    // std::cout << "Triangle P1: "; p1.print();
-    // std::cout << "Triangle P2: "; p2.print();
-    // std::cout << "Triangle P3: "; p3.print();
 
     // 1) Calcular os vetores de direção saindo de p1
     utils::Vec4 r1 = p2 - p1;
-    // std::cout << "Triangle R1: "; r1.print();
     utils::Vec4 r2 = p3 - p1;
-    // std::cout << "Triangle R2: "; r2.print();
 
     // 2) Calcular a normal do triângulo
     utils::Vec4 N = r1.prodVectorial(r2);
     utils::Vec4 normal = N.normalize();
-    // std::cout << "Triangle Normal: "; normal.print();
 
 
     // 3) Calcular o ponto de interseção do raio com o plano do triângulo
