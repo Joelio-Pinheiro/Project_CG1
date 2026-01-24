@@ -20,132 +20,107 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     this->window->setPosition(0, 0, this->DWindow); 
     this->setCamera(new Camera());
     this->setAmbientLight(0.3f, 0.3f, 0.3f);
-    float K = 7.0f;
-    utils::Vec4 C2, C3, C4, C5;
-
-
-    // Plano OBJ1
-    Flat *floor = new Flat(
-        utils::Vec4::Point(0.0f, 0.0f, 0.0f),
-        utils::Vec4::Vector(0.0f, 0.0f, 1.0f)
-    );
-    floor->setDiffuse(0.5f, 0.25f, 0.5f);
-    floor->setSpecular(0.5f, 0.25f, 0.5f);
-    floor->setShininess(2.0f);
-    this->flats.push_back(floor);
-
-
-    // Anel Cilindrico OBJ2
-    C2  = utils::Vec4::Point(100 - K, 200 + K, 0); 
-    float R2 = 10.0f + K;
-    float H2 = 5.0f + 20.0f * K;
-
-    Cylinder *cylinder = new Cylinder(
-        1.0f * R2,
-        1.0f * H2,
-        C2,
-        utils::Vec4::Vector(0.0f, 1.0f, 0.0f),
-        true
-    );
-    cylinder->setDiffuse(0.5f, 0.25f, 0.5f);
-    cylinder->setSpecular(0.5f, 0.25f, 0.5f);
-    cylinder->setShininess(2.0f);
-    this->cylinders.push_back(cylinder);
-
-    // Esfera OBJ3
-    C3 = utils::Vec4::Point(100 - K, 200 + K, 20 * K - R2/4);
-    float R3 = 20 + K; 
-    Sphere *sphere1 = new Sphere(
-        1.0f * R3,
-        C3.x, C3.y, C3.z
-    );
-    sphere1->setDiffuse(0.5f, 0.25f, 0.5f);
-    sphere1->setSpecular(0.5f, 0.25f, 0.5f);
-    sphere1->setShininess(2.0f);
-    this->spheres.push_back(sphere1);    
-
-    // Cone de Base aberta OBJ4
-    C4 = utils::Vec4::Point(200 + K, 100 - K, 0);
-    float R4 = 30.0f + K;
-    float H4 = 10.0f + 50.0f * K;
-    Cone *cone = new Cone(
-        1.0f * R4,
-        1.0f * H4,
-        C4,
-        utils::Vec4::Vector(1.0f, 0.0f, 0.0f),
-        false
-    );
-    cone->setDiffuse(0.5f, 0.25f, 0.5f);
-    cone->setSpecular(0.5f, 0.25f, 0.5f);
-    cone->setShininess(2.0f);
-    this->cones.push_back(cone);
-
-    // Pirâmide reta de base quadrada OBJ5
-    C5 = utils::Vec4::Point(200 + K, 200 + K, 0);
-    float L5 = 5.0f ;
-    float H5 = 20.0f + 20.0f * K;
-    float delta = M_PI / 5; // para girar a pirâmide um pouco
-
-    std::vector<utils::Vec4> verts = {
-        utils::Vec4::Point(-0.5f, -0.5f, 0.0f), // B1 - 0
-        utils::Vec4::Point( 0.5f, -0.5f, 0.0f), // B2 - 1
-        utils::Vec4::Point( 0.5f,  0.5f, 0.0f), // B3 - 2
-        utils::Vec4::Point(-0.5f,  0.5f, 0.0f), // B4 - 3
-        utils::Vec4::Point( 0.0f,  0.0f, 1.0f)  // V  - 4
-    };
     
 
-    // Índices dos triângulos
-    std::vector<unsigned int> indices = {
-        // Base (2 triângulos)
-        0, 1, 2,
-        0, 2, 3,
+   Flat *floor = new Flat(
+        utils::Vec4::Point(0.0f, -1.0f, 0.0f),
+        utils::Vec4::Vector(0.0f, 1.0f, 0.0f)
+    );
+    Texture* floorTexture = new Texture("models/madeira.png");
+    utils::Material floorMat;
 
-        // Faces laterais (4 triângulos)
-        4, 0, 1,
-        4, 1, 2,
-        4, 2, 3,
-        4, 3, 0
-    };
-    Mesh *pyramid = new Mesh(verts, indices);
-    pyramid->setDiffuse(0.5f, 0.25f, 0.5f);
-    pyramid->setSpecular(0.5f, 0.25f, 0.5f);
-    pyramid->setShininess(2.0f);
+    floorMat.setTexture(floorTexture);
+    // floor->setDiffuse(0.1f, 0.6f, 0.1f);
+    floorMat.setSpecular(0.0f, 0.0f, 0.0f);
+    floorMat.setShininess(2.0f);
+    floor->setMaterial(floorMat);
+    this->flats.push_back(floor);
+    
+    Flat *back = new Flat(
+        utils::Vec4::Point(0.0f, 0.0f, -10.0f),
+        utils::Vec4::Vector(0.0f, 0.0f, 1.0f)
+    );
+    back->setDiffuse(0.2f, 0.2f, 0.5f);
+    back->setSpecular(0.0f, 0.0f, 0.0f);
+    back->setShininess(1.0f);
+    this->flats.push_back(back);
+    
+    // Objetos Mesh
+    
+    Mesh *object = new Mesh();
+    bool test = object->loadFromOBJ("models/humanoid_tri.obj");
+    
+    if (test) {
+        std::cout << "OBJ file loaded successfully." << std::endl;
+        
+        utils::Material redMat;
+        redMat.diffuse = {0.8f, 0.2f, 0.2f};
+        redMat.specular = {0.7f, 0.3f, 0.3f};
+        redMat.shininess = 16.0f;
+        object->setMaterial(redMat);
+        
+        float scale = 0.3f;
+            
+        object->scale(scale, scale, scale, utils::Vec4::Point(0,0,0));
+        object->rotationX(-90.0f, utils::Vec4::Point(0,0,0));
+        object->rotationY(90.0f, utils::Vec4::Point(0,0,0));    
+        
+        utils::Vec4 translation = utils::Vec4::Vector(0, -0.5f, -7.0f);
+        object->translation(translation);
+                    
+        object->build();
+        this->meshes.push_back(object);
+    }
+                    
+    Mesh *pyramid = new Mesh();
+    pyramid->addTriangle({0, 1, 0, 1}, {-1, 0, 1, 1}, {1, 0, 1, 1});
+    pyramid->addTriangle({0, 1, 0, 1}, {1, 0, 1, 1}, {1, 0, -1, 1});
+    pyramid->addTriangle({0, 1, 0, 1}, {1, 0, -1, 1}, {-1, 0, -1, 1});
+    pyramid->addTriangle({0, 1, 0, 1}, {-1, 0, -1, 1}, {-1, 0, 1, 1});
+                    
+    utils::Material redMat;
+    redMat.diffuse = {0.8f, 0.2f, 0.2f};
+    redMat.specular = {0.8f, 0.3f, 0.3f};
+    redMat.shininess = 16.0f;
+    pyramid->setMaterial(redMat);
+                    
+    // Transladar a pirâmide um pouco pra frente e pra cima do chão
+    for (Triangle *const t : pyramid->getTriangles()) {
+        t->translation(utils::Vec4::Vector(0, -0.5f, -6.0f));
+    }
+    pyramid->build();
     this->meshes.push_back(pyramid);
-
-    utils::Vec4 p1 = utils::Vec4::Point(-0.5f,  0.5f, 0.0f);
-    p1.x *= L5;
-    p1.y *= L5;
-    p1.z *= H5;
-
-
-    float rad = delta * (M_PI / 180.0f);
-    float cosA = cos(rad);
-    float sinA = sin(rad);
-
-    // Rotação no P1
-    float x1 = p1.x * cosA - p1.y * sinA;
-    float y1 = p1.x * sinA + p1.y * cosA;
-    p1.x = x1;
-    p1.y = y1;
-
-    //translation
-    p1 = p1 + C5;
-    std::cout << "Piramide Vertice 1 escalado: "; p1.print();
-
-    // Transformações dos objetos para suas posições corretas
-    // OBJ5
-    pyramid->scale(L5, L5, H5, utils::Vec4::Point(0.0f, 0.0f, 0.0f));
-    pyramid->rotationZ(delta, utils::Vec4::Point(0.0f, 0.0f, 0.0f));
-    pyramid->translation(C5);
-
+                    
+                    
+    Mesh *cube = new Mesh();
+    cube->addTriangle({-0.5f, 0.0f, -0.5f, 1}, {0.5f, 0.0f, -0.5f, 1}, {0.5f, 1.0f, -0.5f, 1});
+    cube->addTriangle({-0.5f, 0.0f, -0.5f, 1}, {0.5f, 1.0f, -0.5f, 1}, {-0.5f, 1.0f, -0.5f, 1});
+    cube->addTriangle({-0.5f, 0.0f, 0.5f, 1}, {0.5f, 0.0f, 0.5f, 1}, {0.5f, 1.0f, 0.5f, 1});
+    cube->addTriangle({-0.5f, 0.0f, 0.5f, 1}, {0.5f, 1.0f, 0.5f, 1}, {-0.5f, 1.0f, 0.5f, 1});
+    cube->addTriangle({-0.5f, 1.0f, -0.5f, 1}, {0.5f, 1.0f, -0.5f, 1}, {0.5f, 1.0f, 0.5f, 1});
+    cube->addTriangle({-0.5f, 1.0f, -0.5f, 1}, {0.5f, 1.0f, 0.5f, 1}, {-0.5f, 1.0f, 0.5f, 1});
+    cube->addTriangle({-0.5f, 0.0f, -0.5f, 1}, {0.5f, 0.0f, -0.5f, 1}, {0.5f, 0.0f, 0.5f, 1});
+    cube->addTriangle({-0.5f, 0.0f, -0.5f, 1}, {0.5f, 0.0f, 0.5f, 1}, {-0.5f, 0.0f, 0.5f, 1});
+    
+    utils::Material blueMat;
+    blueMat.diffuse = {0.2f, 0.2f, 0.8f};
+    blueMat.specular = {0.5f, 0.5f, 0.8f};
+    blueMat.shininess = 12.0f;
+    cube->setMaterial(blueMat);
+    
+    for (Triangle *const triangle : cube->getTriangles()) {
+        triangle->translation(utils::Vec4::Vector(2.5f, -0.5f, -6.5f));
+    }
+    cube->build();
+    this->meshes.push_back(cube);
+    
+    
     Light *mainLight = new Light(
-        300.0f, 300.0f, 1000.0f,
-        utils::RGB(1.0f, 1.0f, 1.0f),
+        -5.0f, 8.0f, -3.0f,
+        utils::RGB(0.8f, 0.8f, 0.8f),
         this
     );
     this->lights.push_back(mainLight);
-
 }
 
 std::vector<SDL_Color> Scene::traceRays() {

@@ -229,6 +229,9 @@ utils::HitInfo Triangle::intersects(const Ray& ray) const {
     utils::Vec4 N = r1.prodVectorial(r2);
     utils::Vec4 normal = N.normalize();
 
+    if (ray.getDirection().dot(normal) > 0) {//Back face culling 
+        return hitInfo;
+    }
 
     // 3) Calcular o ponto de interseção do raio com o plano do triângulo
     float denom = (ray.getDirection()).dot(normal); // dr . N

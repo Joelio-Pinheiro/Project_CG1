@@ -7,12 +7,25 @@
 #include "../headers/Ray.h"
 #include "../headers/Triangle.h"
 
+struct BVHNode {
+    utils::AABB bounds;
+    BVHNode* left = nullptr;
+    BVHNode* right = nullptr;
+    std::vector<Triangle*> tris; // apenas se for folha
+    bool isLeaf() const { return left==nullptr && right==nullptr; }
+};
 
 class Mesh {
     private:
         std::vector<Triangle*> triangles;
         std::vector<utils::Vec4> vertices;
         utils::Material material = utils::Material();
+
+        BVHNode* bvhRoot = nullptr;
+        BVHNode* buildBVH(std::vector<Triangle*>& objs, int depth = 0, int maxLeafSize = 4);
+        utils::HitInfo intersectsBVH(const Ray& ray, BVHNode* root) const;
+        utils::AABB triangleAABB(const Triangle* tri) const;
+
     public:
         Mesh() = default;
         Mesh(const std::vector<utils::Vec4>& verts, const std::vector<unsigned int>& indices);
@@ -27,6 +40,8 @@ class Mesh {
 
         void addTriangle(const utils::Vec4& p1, const utils::Vec4& p2, const utils::Vec4& p3);
         utils::HitInfo intersects(const Ray& ray) const;
+        void build();
+        void deleteBVH(BVHNode* node);
 
         bool loadFromOBJ(const std::string& filepath);
 
@@ -39,6 +54,11 @@ class Mesh {
         void shear(float shXY, float shXZ, float shYX, float shYZ, float shZX, float shZY, const utils::Vec4& center);
         void reflection(const utils::Vec4& planePoint, const utils::Vec4& planeNormal);
 
+        ~Mesh() {
+            for (Triangle* t : triangles)
+                delete t;
+            deleteBVH(bvhRoot);
+        }
 };
 
 #endif // MESH_H

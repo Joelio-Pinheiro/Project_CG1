@@ -28,6 +28,15 @@ namespace utils {
         void print() const;
         Vec4 rotateVec(const Quaternion& q) const;
     };
+    struct AABB {
+        utils::Vec4 min; // Ponto mínimo (menores coordenadas x, y, z)
+        utils::Vec4 max; // Ponto máximo (maiores coordenadas x, y, z)
+
+        AABB();
+        void expand(const utils::Vec4& point);
+        void expand(const AABB& other);
+        static bool intersects(const AABB& box, const utils::Vec4& dirRay, const utils::Vec4& originRay, float tMax);
+    };
     
     struct HitInfo {
         bool hit; // Se ocorreu a interseção
