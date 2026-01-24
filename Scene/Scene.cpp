@@ -114,21 +114,22 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     cube->build();
     this->meshes.push_back(cube);
     
-    
-    Light *mainLight = new Light(
-        -5.0f, 8.0f, -3.0f,
-        utils::RGB(0.8f, 0.8f, 0.8f),
+    float rad30 = 20.0f * (M_PI / 180.0f);
+    float rad45 = 35.0f * (M_PI / 180.0f);
+
+    Light* spotLight = new Light(
+        utils::Vec4::Vector(0.0f, -1.0f, -1.0f), // direção da luz (para frente)
+        utils::Vec4::Point(0.0f, 8.0f, -1.0f),     // posição da luz
+        rad30,                  // cutoff interno
+        rad45,                  // cutoff externo
+        utils::RGB(1.0f, 0.95f, 0.85f),           // intensidade
         this
     );
-    this->lights.push_back(mainLight);
+
+    this->lights.push_back(spotLight);
 }
 
 std::vector<SDL_Color> Scene::traceRays() {
-    // std::cout << "Camera Eye: "; camera->getEye().print();
-    // std::cout << "Camera Forward: "; camera->getForward().print();
-    // std::cout << "Camera Up: "; camera->getUp().print();
-    // std::cout << "Camera Right: "; camera->getRight().print();
-    // std::cout << "DWindow: " << this->DWindow << std::endl;
 
     float Dx = this->WIDTH / this->nCol;
     float Dy = this->HEIGHT / this->nRow;
