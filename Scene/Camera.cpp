@@ -14,35 +14,42 @@ Camera::Camera(ProjectionType proj) {
 
 
 utils::Vec4 Camera::getRight() const {
-    utils::Vec4 f = this->forward.normalize();
-    utils::Vec4 u = this->up.normalize();
-    return u.prodVectorial(f * (-1)).normalize();   // up × forward
+    // right = forward × up
+    utils::Vec4 f = forward.normalize();
+    utils::Vec4 u = up.normalize();
+    return f.prodVectorial(u).normalize();
 }
 
 
 void Camera::yaw(float angleDeg) {
     float rad = angleDeg * M_PI / 180.0f;
-    utils::Quaternion q = utils::Quaternion::fromAxisAngle(up, rad);
+    utils::Quaternion q = utils::Quaternion::fromAxisAngle(up.normalize(), rad);
 
     forward = forward.rotateVec(q).normalize();
+    up      = up.rotateVec(q).normalize();
+
     reorthogonalize();
 }
+
 
 
 void Camera::pitchRotate(float angleDeg) {
     float newPitch = std::clamp(pitch + angleDeg, -89.0f, 89.0f);
     float delta = newPitch - pitch;
+    const float EPS = 1e-4f;
+    if (std::fabs(delta) < EPS) return;
     pitch = newPitch;
 
-    if (delta == 0.0f) return;
-
+    utils::Vec4 axis = this->getRight(); 
     float rad = delta * M_PI / 180.0f;
-    utils::Quaternion q =
-        utils::Quaternion::fromAxisAngle(right, rad);
+    utils::Quaternion q = utils::Quaternion::fromAxisAngle(axis.normalize(), rad);
 
     forward = forward.rotateVec(q).normalize();
+    up      = up.rotateVec(q).normalize();
+
     reorthogonalize();
 }
+
 
 
 void Camera::move(float dx, float dy, float dz) {
@@ -55,6 +62,6 @@ void Camera::move(float dx, float dy, float dz) {
 
 void Camera::reorthogonalize() {
     forward = forward.normalize();
-    right   = forward.prodVectorial(up).normalize();
-    up      = right.prodVectorial(forward).normalize();
+    right   = forward.prodVectorial(up).normalize();  // forward × up
+    up      = right.prodVectorial(forward).normalize(); // right × forward
 }

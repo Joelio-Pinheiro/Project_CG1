@@ -44,8 +44,8 @@ class Scene {
         bool mouseCaptured = false;
         int lasMouseX = 0;
         int lastMouseY = 0;
-
-        float mouseSensitivity = 0.05f;
+        bool ignoreNextMouseMotion = false;
+        float mouseSensitivity = 0.12f;
         float moveSpeed = 0.1f;
         float zoomSpeed = 0.5f;
         int speedRender = 1;

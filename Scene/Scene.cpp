@@ -330,7 +330,7 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     // ---------- CÂMERA ----------
     camera->setEye(utils::Vec4::Point(0.0f, 1.2f, -1.6f));
     camera->setForward(utils::Vec4::Point(0.0f, 0.7f, 1.8f));
-    camera->setUp(utils::Vec4::Vector(0.0f, 1.0f, 1.0f));
+    camera->setUp(utils::Vec4::Vector(0.0f, 1.0f, 0.0f));
 
     // 1 ponto de fuga
     // camera->setEye(utils::Vec4::Point(0, 2, -5));
@@ -611,6 +611,7 @@ void Scene::handleEvent(const SDL_Event& e){
             if (e.button.button == SDL_BUTTON_RIGHT){
                 mouseCaptured = true;
                 SDL_SetRelativeMouseMode(SDL_TRUE);
+                ignoreNextMouseMotion = true;
             }
             if(e.button.button == SDL_BUTTON_LEFT){
                 pick(e.button.x, e.button.y);
@@ -626,15 +627,17 @@ void Scene::handleEvent(const SDL_Event& e){
 
         case SDL_MOUSEMOTION:
             if (mouseCaptured) {
+                if (ignoreNextMouseMotion) {
+                    // consome e descarta este evento
+                    ignoreNextMouseMotion = false;
+                    break;
+                }
+
                 float dx = (float)e.motion.xrel * mouseSensitivity;
                 float dy = (float)e.motion.yrel * mouseSensitivity;
-                printf("Mouse moved: dx=%.2f dy=%.2f\n", dx, dy);
 
                 camera->yaw(-dx);
                 camera->pitchRotate(-dy);
-                printf("Camera forward: "); camera->getForward().print();
-                printf("Camera up: "); camera->getUp().print();
-                printf("Camera right: "); camera->getRight().print();
                 this->markDirty();
             }
             break;
