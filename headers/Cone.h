@@ -29,6 +29,7 @@ class Cone {
         void setDiffuse(float r, float g, float b);
         void setSpecular(float r, float g, float b);
         void setShininess(float shininess);
+        void setMaterial(const utils::Material& m) { this->material = m; }
         utils::Material getMaterial() const { return this->material; }
         utils::Vec4 getBaseCenter() const { return baseCenter; };
         utils::Vec4 getDirection() const { return direction; };

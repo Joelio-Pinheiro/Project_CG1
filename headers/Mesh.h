@@ -38,7 +38,7 @@ class Mesh {
         utils::Material getMaterial() const { return this->material; }
         const std::vector<Triangle*>& getTriangles() const { return this->triangles; }
 
-        void addTriangle(const utils::Vec4& p1, const utils::Vec4& p2, const utils::Vec4& p3);
+        void addTriangle(const utils::Vec4& p1, const utils::Vec4& p2, const utils::Vec4& p3, float u1=0, float u2=0, float u3=0, float v1=0, float v2=0, float v3=0);
         utils::HitInfo intersects(const Ray& ray) const;
         void build();
         void deleteBVH(BVHNode* node);

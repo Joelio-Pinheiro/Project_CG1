@@ -117,6 +117,7 @@ namespace utils {
             float getWidth() { return this->WWindow; }
             float getHeight() { return this->HWindow; }
             Vec4 getPosition();
+            SDL_Window* getSDLWindow() { return this->w; }
             void setPosition(float x, float y, float z) { this->position = Vec4::Point(x, y, z); }
             SDL_Renderer* getRenderer() { return this->renderer; }
         };

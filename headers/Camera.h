@@ -11,10 +11,12 @@ class Camera {
         utils::Vec4 forward; // vetor de direçao que a camera esta olhando
         utils::Vec4 up; // vetor acima da camera
         utils::Vec4 right; // vetor à direita da camera
+        float pitch = 0.0f; // angulo de inclinaçao vertical
     public:
         Camera();
 
-        void rotate(float angleDeg, const utils::Vec4& axis);
+        void yaw(float angleDeg);
+        void pitchRotate(float angleDeg);
         void move(float dx, float dy, float dz);
 
         void setEye(const utils::Vec4& eye);

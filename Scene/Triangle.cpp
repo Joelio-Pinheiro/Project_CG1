@@ -268,10 +268,32 @@ utils::HitInfo Triangle::intersects(const Ray& ray) const {
         hitInfo.t = t;
         hitInfo.point = PI;
         hitInfo.normal = normal;
-        hitInfo.u = fmodf(hitInfo.point.x * 0.2f, 1.0f);
-        hitInfo.v = fmodf(hitInfo.point.z * 0.2f, 1.0f);
-        if (hitInfo.u < 0) hitInfo.u += 1.0f;
-        if (hitInfo.v < 0) hitInfo.v += 1.0f;
+
+
+    if (hasUV) {
+        utils::Vec4 ve0 = p2 - p1;
+        utils::Vec4 ve1 = p3 - p1;
+        utils::Vec4 ve2 = PI - p1;
+
+        float d00 = ve0.dot(ve0);
+        float d01 = ve0.dot(ve1);
+        float d11 = ve1.dot(ve1);
+        float d20 = ve2.dot(ve0);
+        float d21 = ve2.dot(ve1);
+
+        float denom = d00 * d11 - d01 * d01;
+
+        float v = (d11 * d20 - d01 * d21) / denom;
+        float w = (d00 * d21 - d01 * d20) / denom;
+        float u = 1.0f - v - w;
+
+        hitInfo.u = u * u1 + v * u2 + w * u3;
+        hitInfo.v = u * v1 + v * v2 + w * v3;
+        } else {
+            hitInfo.u = fmodf(hitInfo.point.x * 0.2f, 1.0f);
+            hitInfo.v = fmodf(hitInfo.point.z * 0.2f, 1.0f);
+        }
+
     }
 
     hitInfo.type = "Triangle";    

@@ -24,10 +24,11 @@ void Mesh::setShininess(float shininess) {
     this->material.setShininess(shininess);
 }
 
-void Mesh::addTriangle(const utils::Vec4& p1, const utils::Vec4& p2, const utils::Vec4& p3) {
+void Mesh::addTriangle(const utils::Vec4& p1, const utils::Vec4& p2, const utils::Vec4& p3, float u1, float u2, float u3, float v1, float v2, float v3) {
     Triangle* triangle = new Triangle(p1, p2, p3);
 
     triangle->setMaterial(this->material);
+    triangle->setUVs(u1, u2, u3, v1, v2, v3);
     this->triangles.emplace_back(triangle);
 }
 
@@ -85,6 +86,10 @@ utils::HitInfo Mesh::intersects(const Ray& ray) const {
 bool Mesh::loadFromOBJ(const std::string& filepath) {
     std::vector<utils::Vec4> temp_vertices;
     std::vector<unsigned int> vertexIndices;
+    std::vector<float> temp_us;
+    std::vector<float> temp_vs;
+    std::vector<unsigned int> uvIndices;
+
 
     std::ifstream file(filepath);
     if (!file.is_open()) { // caso de errado ao abrir o arquivo
@@ -98,24 +103,42 @@ bool Mesh::loadFromOBJ(const std::string& filepath) {
         std::string type;
         iss >> type;
 
+        if (type == "vt") {
+            float u, v;
+            iss >> u >> v;
+            temp_us.emplace_back(u);
+            temp_vs.emplace_back(v);
+        }
+
         if (type == "v") {
             float x, y, z;
             iss >> x >> y >> z;
             temp_vertices.emplace_back(utils::Vec4::Point(x, y, z));
         } else if (type == "f") {
-            std::string s1,s2,s3;
+            std::string s1, s2, s3;
             iss >> s1 >> s2 >> s3;
-            auto parse = [](const std::string &tok)->unsigned int {
-                std::istringstream t(tok);
-                unsigned int idx=0;
-                t >> idx;
-                return idx;
+
+            auto parse = [](const std::string& tok, unsigned int& v, unsigned int& vt) {
+                sscanf(tok.c_str(), "%u/%u", &v, &vt);
+                v--; vt--;
             };
-            unsigned int v1 = parse(s1), v2 = parse(s2), v3 = parse(s3);
-            vertexIndices.push_back(v1 - 1);
-            vertexIndices.push_back(v2 - 1);
-            vertexIndices.push_back(v3 - 1);
+
+            unsigned int v1, v2, v3;
+            unsigned int t1, t2, t3;
+
+            parse(s1, v1, t1);
+            parse(s2, v2, t2);
+            parse(s3, v3, t3);
+
+            vertexIndices.push_back(v1);
+            vertexIndices.push_back(v2);
+            vertexIndices.push_back(v3);
+
+            uvIndices.push_back(t1);
+            uvIndices.push_back(t2);
+            uvIndices.push_back(t3);
         }
+
     }
     file.close();
 
@@ -130,7 +153,13 @@ bool Mesh::loadFromOBJ(const std::string& filepath) {
         utils::Vec4 p1 = vertices[vertexIndices[i]];
         utils::Vec4 p2 = vertices[vertexIndices[i+1]];
         utils::Vec4 p3 = vertices[vertexIndices[i+2]];
-        addTriangle(p1,p2,p3);
+        if (!temp_us.empty() && !temp_vs.empty()) {
+            addTriangle(p1,p2,p3, 
+                        temp_us[uvIndices[i]], temp_us[uvIndices[i+1]], temp_us[uvIndices[i+2]],
+                        temp_vs[uvIndices[i]], temp_vs[uvIndices[i+1]], temp_vs[uvIndices[i+2]]);
+        } else {
+            addTriangle(p1,p2,p3);
+        }
     }
     return true;
 }

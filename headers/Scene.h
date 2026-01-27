@@ -35,6 +35,20 @@ class Scene {
         std::vector<Triangle*> triangles;
         std::vector<Mesh*> meshes;
         std::vector<Light*> lights;
+
+        SDL_Texture* canvasTexture = nullptr;
+        SDL_PixelFormat* canvasFormat = nullptr;
+        int texW = 0, texH = 0;
+
+        //interatividade
+        bool mouseCaptured = false;
+        int lasMouseX = 0;
+        int lastMouseY = 0;
+
+        float mouseSensitivity = 0.05f;
+        float moveSpeed = 0.1f;
+        float zoomSpeed = 0.5f;
+
     public:
         Scene(float width, float height, float DWindow, int nRow, int nCol, utils::window *window);
         void setCamera(Camera* cam) { this->camera = cam; }
@@ -47,19 +61,26 @@ class Scene {
         std::vector<Cone*> getCones() const { return this->cones; }
         std::vector<Triangle*> getTriangles() const { return this->triangles; }
         std::vector<Mesh*> getMeshes() const { return this->meshes; }
+        // utils
+        int getNRow() const { return this->nRow; }
+        int getNCol() const { return this->nCol; }
+        SDL_Texture* getCanvasTexture() const { return canvasTexture; }
 
-        // void incrementObserverZ(float z) { this->observerPosition.z += z; }
-        // void incrementObserverX(float x) { this->observerPosition.x += x; }
-        // void incrementObserverY(float y) { this->observerPosition.y += y; }
-        // void decrementObserverZ(float z) { this->observerPosition.z -= z; }
-        // void decrementObserverX(float x) { this->observerPosition.x -= x; }
-        // void decrementObserverY(float y) { this->observerPosition.y -= y; }
-        // utils::Vec4 getObserverPosition() const { return this->observerPosition; }
+
+        // Interatividade
+        void pick(int mx, int my);
+        void handleEvent(const SDL_Event& e);
+        void handleKeyboard(const Uint8* keys);
 
         void render();
+        ~Scene() {
+            if (canvasTexture) SDL_DestroyTexture(canvasTexture);
+            if (canvasFormat) SDL_FreeFormat(canvasFormat);
+        };
     private:
         std::vector<SDL_Color> traceRays();
         void drawCanvas(const std::vector<SDL_Color>& canvas);
+        void ensureTexture(int w, int h);
 };
 
 #endif // SCENE_H
