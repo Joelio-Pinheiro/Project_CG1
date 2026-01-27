@@ -3,27 +3,15 @@
 #include <algorithm>
 
 
-Camera::Camera() {
+Camera::Camera(ProjectionType proj) {
     setEye(utils::Vec4::Point(0,0,0));
     setForward(utils::Vec4::Vector(0,0,-1));
     setUp(utils::Vec4::Vector(0,1,0));
+    this->projection = proj;
     
     this->reorthogonalize();
 }
 
-void Camera::setEye(const utils::Vec4& eye) {
-    this->eye = eye;
-}
-void Camera::setForward(const utils::Vec4& forward) {
-    this->forward = forward.normalize();
-
-    this->reorthogonalize();
-}
-void Camera::setUp(const utils::Vec4& up) {
-    this->up = up.normalize();
-
-    this->reorthogonalize();
-}
 
 utils::Vec4 Camera::getRight() const {
     utils::Vec4 f = this->forward.normalize();

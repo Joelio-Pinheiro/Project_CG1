@@ -48,7 +48,8 @@ class Scene {
         float mouseSensitivity = 0.05f;
         float moveSpeed = 0.1f;
         float zoomSpeed = 0.5f;
-
+        int speedRender = 1;
+        bool dirty = true;
     public:
         Scene(float width, float height, float DWindow, int nRow, int nCol, utils::window *window);
         void setCamera(Camera* cam) { this->camera = cam; }
@@ -65,12 +66,18 @@ class Scene {
         int getNRow() const { return this->nRow; }
         int getNCol() const { return this->nCol; }
         SDL_Texture* getCanvasTexture() const { return canvasTexture; }
-
-
+        
+        
         // Interatividade
         void pick(int mx, int my);
         void handleEvent(const SDL_Event& e);
         void handleKeyboard(const Uint8* keys);
+        Camera* getCamera() const { return this->camera; }
+        int getSpeedRender() const { return this->speedRender; }
+        void setSpeedRender(int sr) { this->speedRender = sr; }
+        void markDirty() { dirty = true; }
+        void clearDirty() { dirty = false; }
+        bool isDirty() const { return dirty; }
 
         void render();
         ~Scene() {

@@ -18,7 +18,7 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     this->nCol = nCol;
 
     this->window->setPosition(0, 0, this->DWindow);
-    this->setCamera(new Camera());
+    this->setCamera(new Camera(PERSPECTIVE));
     this->setAmbientLight(0.15f, 0.15f, 0.15f); 
 
     // ---- MATERIAIS ----
@@ -331,6 +331,22 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     camera->setEye(utils::Vec4::Point(0.0f, 1.2f, -1.6f));
     camera->setForward(utils::Vec4::Point(0.0f, 0.7f, 1.8f));
     camera->setUp(utils::Vec4::Vector(0.0f, 1.0f, 1.0f));
+
+    // 1 ponto de fuga
+    // camera->setEye(utils::Vec4::Point(0, 2, -5));
+    // camera->setForward(utils::Vec4::Vector(0, 0, 1));
+    // camera->setUp(utils::Vec4::Vector(0, 1, 0));
+
+    // 2 pontos de fuga
+    // camera->setEye(utils::Vec4::Point(0, 2, -5));
+    // camera->setForward(utils::Vec4::Vector(1, 0, 1).normalize());
+    // camera->setUp(utils::Vec4::Vector(0, 1, 0));
+
+    // 3 pontos de fuga
+    // camera->setEye(utils::Vec4::Point(0, 2, -5));
+    // camera->setForward(utils::Vec4::Vector(1, -0.5f, 1).normalize());
+    // camera->setUp(utils::Vec4::Vector(0, 1, 0));
+
 }
 
 std::vector<SDL_Color> Scene::traceRays() {
@@ -348,6 +364,10 @@ std::vector<SDL_Color> Scene::traceRays() {
         for(int c = 0; c < this->nCol; c++) {
             float X = -this->WIDTH/2 + Dx/2 + c*Dx; // X coordenada do pixel
             
+            if (c % this->speedRender != 0 || l % this->speedRender != 0){
+                canvas[l * this->nCol + c] = utils::RGB(0.0f, 0.0f, 0.0f).toSDLColor();
+                continue;
+            }
             
             utils::Vec4 pixel =
                 camera->getEye()
@@ -355,8 +375,33 @@ std::vector<SDL_Color> Scene::traceRays() {
                 + camera->getRight()   * X
                 + camera->getUp()      * Y;
 
-            utils::Vec4 dir = (pixel - camera->getEye()).normalize();
-            Ray ray(camera->getEye(), dir);
+            Ray ray(utils::Vec4::Point(0,0,0), utils::Vec4::Vector(0,0,0)); // raio default
+
+            if (camera->getProjection() == PERSPECTIVE) {
+                utils::Vec4 dir = (pixel - camera->getEye()).normalize();
+                ray = Ray(camera->getEye(), dir);
+            } else if (camera->getProjection() == ORTHOGRAPHIC) {
+                utils::Vec4 origin =
+                    camera->getEye()
+                    + camera->getRight() * X
+                    + camera->getUp() * Y;
+
+                utils::Vec4 dir = camera->getForward().normalize();
+                ray = Ray(origin, dir);
+            } else if (camera->getProjection() == OBLIQUE) { // OBLIQUE
+                utils::Vec4 origin =
+                        camera->getEye()
+                        + camera->getRight() * X
+                        + camera->getUp() * Y;
+
+                utils::Vec4 dir = (
+                    camera->getForward()
+                    + camera->getRight() * 0.5f
+                    + camera->getUp() * 0.5f
+                ).normalize();
+
+                ray = Ray(origin, dir);
+            }
             
             utils::RGB pixelColor = bgColor;
 
@@ -590,12 +635,20 @@ void Scene::handleEvent(const SDL_Event& e){
                 printf("Camera forward: "); camera->getForward().print();
                 printf("Camera up: "); camera->getUp().print();
                 printf("Camera right: "); camera->getRight().print();
+                this->markDirty();
             }
             break;
 
 
-        case SDL_MOUSEWHEEL: // depois vai ser o zoom
-            camera->move(0, 0, e.wheel.y * zoomSpeed);
+        case SDL_MOUSEWHEEL:
+            if(e.wheel.y > 0) {
+                DWindow += zoomSpeed; // zoom in
+            } else {
+                DWindow -= zoomSpeed;   // zoom out
+                if (DWindow < 0.1f) DWindow = 0.1f;
+            }
+            this->markDirty();
+            printf("DWindow: %.2f\n", DWindow);
             break;
         case SDL_KEYDOWN:
             switch (e.key.keysym.scancode)
@@ -607,29 +660,36 @@ void Scene::handleEvent(const SDL_Event& e){
                 case SDL_SCANCODE_Q: camera->move(0,-moveSpeed*2.0f,0); break;
                 case SDL_SCANCODE_E: camera->move(0,moveSpeed*2.0f,0); break;
             }
+            this->markDirty();
             break;
+
     }
 }
 
 void Scene::handleKeyboard(const Uint8* keys)
 {
     float speed = this->moveSpeed;
-
     if (keys[SDL_SCANCODE_W])
         camera->move(0, 0, speed);
+        this->markDirty();
 
     if (keys[SDL_SCANCODE_S])
         camera->move(0, 0, -speed);
+        this->markDirty();
 
     if (keys[SDL_SCANCODE_A])
         camera->move(-speed, 0, 0);
+        this->markDirty();
 
     if (keys[SDL_SCANCODE_D])
         camera->move(speed, 0, 0);
+        this->markDirty();
 
     if (keys[SDL_SCANCODE_Q])
         camera->move(0, -speed, 0);
+        this->markDirty();
 
     if (keys[SDL_SCANCODE_E])
         camera->move(0, speed, 0);
+        this->markDirty();
 }
