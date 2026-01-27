@@ -57,7 +57,6 @@ void Camera::move(float dx, float dy, float dz) {
         + right   * dx
         + up      * dy
         + forward * dz;
-    printf("Camera position: "); eye.print();
 }
 
 void Camera::reorthogonalize() {

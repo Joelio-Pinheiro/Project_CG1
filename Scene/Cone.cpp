@@ -95,8 +95,8 @@ utils::HitInfo Cone::intersects(const Ray& ray) const {
 
     if(isCapped()) {
         // Verificar interseção com a base do cone
-        Flat *basecap = new Flat(baseCenter, dc * -1.0f);
-         utils::HitInfo baseHit = basecap->intersects(ray);
+        Flat basecap = Flat(baseCenter, dc * -1.0f);
+         utils::HitInfo baseHit = basecap.intersects(ray);
          if (baseHit.hit) {
              float yBase = (baseHit.point - baseCenter).length();
              if (yBase <= radius + 1e-4f) {

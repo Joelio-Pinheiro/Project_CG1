@@ -2,7 +2,7 @@ all: main
 
 main: main.cpp build/Texture.o build/Vec4.o build/AABB.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Flat.o build/Cylinder.o build/Cone.o build/Triangle.o build/Mesh.o build/Camera.o build/Scene.o build/Light.o build/imgui.o build/imgui_draw.o build/imgui_widgets.o build/imgui_tables.o build/imgui_impl_sdl2.o build/imgui_impl_sdlrenderer2.o
 	mkdir -p build
-	g++ main.cpp build/Texture.o build/Vec4.o build/AABB.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Flat.o build/Cylinder.o build/Cone.o build/Triangle.o build/Mesh.o build/Camera.o build/Scene.o build/Light.o build/imgui.o build/imgui_draw.o build/imgui_widgets.o build/imgui_tables.o build/imgui_impl_sdl2.o build/imgui_impl_sdlrenderer2.o -o main `sdl2-config --cflags --libs` -lSDL2_image -Iimgui -Iimgui/backends
+	g++ main.cpp build/Texture.o build/Vec4.o build/AABB.o build/RGB.o build/Window.o build/Ray.o build/Sphere.o build/Flat.o build/Cylinder.o build/Cone.o build/Triangle.o build/Mesh.o build/Camera.o build/Scene.o build/Light.o build/imgui.o build/imgui_draw.o build/imgui_widgets.o build/imgui_tables.o build/imgui_impl_sdl2.o build/imgui_impl_sdlrenderer2.o -fopenmp -o main `sdl2-config --cflags --libs` -lSDL2_image -Iimgui -Iimgui/backends
 
 build/Texture.o: Scene/Texture.cpp headers/Texture.h
 	mkdir -p build
@@ -55,7 +55,7 @@ build/Camera.o: Scene/Camera.cpp headers/Camera.h
 
 build/Scene.o: Scene/Scene.cpp headers/Scene.h
 	mkdir -p build
-	g++ -c Scene/Scene.cpp -o build/Scene.o `sdl2-config --cflags` -Iimgui -Iimgui/backends
+	g++ -c -fopenmp Scene/Scene.cpp -o build/Scene.o `sdl2-config --cflags` -Iimgui -Iimgui/backends
 build/Light.o: Scene/Light.cpp headers/Light.h
 	mkdir -p build
 	g++ -c Scene/Light.cpp -o build/Light.o `sdl2-config --cflags` -Iimgui -Iimgui/backends

@@ -8,6 +8,7 @@
 #include "../headers/Light.h"
 #include <SDL.h>
 #include <GL/glew.h>
+#include <omp.h>
 
 Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils::window *window){
     this->WIDTH = width;
@@ -25,7 +26,7 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     utils::Material skyMat;
     Texture* skyTex = new Texture("models/ceu_noite.png");
     skyMat.setTexture(skyTex);
-    // skyMat.setDiffuse(0.2f, 0.45f, 0.9f);
+    skyMat.setDiffuse(0.2f, 0.45f, 0.9f);
     skyMat.setSpecular(0.0f, 0.0f, 0.0f);
     skyMat.setShininess(1.0f);
 
@@ -82,12 +83,10 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     floor->setMaterial(snowMat);
     this->flats.push_back(floor);
 
-    // ---------- ÁRVORES (tronco + copa) ----------
+    // // ---------- ÁRVORES (tronco + copa) ----------
     {
         std::vector<utils::Vec4> treePos = {
             utils::Vec4::Point(-1.4f, 0.0f, 3.6f), // frente esquerda
-            utils::Vec4::Point(0.0f, 0.0f, 3.2f), // meio-esquerda
-            utils::Vec4::Point( 3.4f, 0.0f, 3.6f)  // direita
         };
 
         for (int i = 0; i < (int)treePos.size(); ++i) {
@@ -111,7 +110,7 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
         }
     }
 
-    // ---------- BONECO DE NEVE (2 esferas + olhos) ----------
+    // // ---------- BONECO DE NEVE (2 esferas + olhos) ----------
     {
         float bx = -1.5f;
         float bz = 1.0f;
@@ -328,14 +327,15 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
     this->lights.push_back(dir);
 
     // ---------- CÂMERA ----------
-    camera->setEye(utils::Vec4::Point(0.0f, 1.2f, -1.6f));
-    camera->setForward(utils::Vec4::Point(0.0f, 0.7f, 1.8f));
-    camera->setUp(utils::Vec4::Vector(0.0f, 1.0f, 0.0f));
+    // camera->setEye(utils::Vec4::Point(0.0f, 1.2f, -1.6f));
+    // camera->setForward(utils::Vec4::Point(0.0f, 0.7f, 1.8f));
+    // camera->setUp(utils::Vec4::Vector(0.0f, 1.0f, 0.0f));
 
     // 1 ponto de fuga
-    // camera->setEye(utils::Vec4::Point(0, 2, -5));
-    // camera->setForward(utils::Vec4::Vector(0, 0, 1));
-    // camera->setUp(utils::Vec4::Vector(0, 1, 0));
+    camera->setEye(utils::Vec4::Point(0.0f, 1.2f, -4.0f));
+    camera->setForward(utils::Vec4::Point(0.0f, 1.2f, 2.0f));
+    camera->setUp(utils::Vec4::Vector(0.0f, 1.0f, 0.0f));
+
 
     // 2 pontos de fuga
     // camera->setEye(utils::Vec4::Point(0, 2, -5));
@@ -349,6 +349,7 @@ Scene::Scene(float width, float height, float DWindow, int nRow, int nCol, utils
 
 }
 
+
 std::vector<SDL_Color> Scene::traceRays() {
 
     float Dx = this->WIDTH / this->nCol;
@@ -359,9 +360,10 @@ std::vector<SDL_Color> Scene::traceRays() {
     std::vector<SDL_Color> canvas(this->nRow * this->nCol, bgColor.toSDLColor()); // armazena todos os pixels com a cor de fundo
     
     float Z = this->DWindow; // Z coordenada da janela
+    #pragma omp parallel for collapse(2) schedule(dynamic, 8)
     for (int l = 0; l < this->nRow; l++) {
-        float Y = this->HEIGHT/2 - Dy/2 - l*Dy; // Y coordenada do pixel
         for(int c = 0; c < this->nCol; c++) {
+            float Y = this->HEIGHT/2 - Dy/2 - l*Dy; // Y coordenada do pixel
             float X = -this->WIDTH/2 + Dx/2 + c*Dx; // X coordenada do pixel
             
             if (c % this->speedRender != 0 || l % this->speedRender != 0){
@@ -651,7 +653,6 @@ void Scene::handleEvent(const SDL_Event& e){
                 if (DWindow < 0.1f) DWindow = 0.1f;
             }
             this->markDirty();
-            printf("DWindow: %.2f\n", DWindow);
             break;
         case SDL_KEYDOWN:
             switch (e.key.keysym.scancode)

@@ -48,7 +48,7 @@ class Scene {
         float mouseSensitivity = 0.12f;
         float moveSpeed = 0.1f;
         float zoomSpeed = 0.5f;
-        int speedRender = 1;
+        int speedRender = 3;
         bool dirty = true;
     public:
         Scene(float width, float height, float DWindow, int nRow, int nCol, utils::window *window);

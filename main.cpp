@@ -7,6 +7,7 @@
 #include "imgui.h"
 #include "backends/imgui_impl_sdl2.h"
 #include "backends/imgui_impl_sdlrenderer2.h"
+#include <algorithm>
 
 
 int main(int argc, char **argv)
@@ -20,7 +21,7 @@ int main(int argc, char **argv)
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Habilitar navegação por teclado
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     ImGui::StyleColorsDark();
 
     SDL_Window* sdlWindow = myWindow.getSDLWindow();
@@ -28,19 +29,20 @@ int main(int argc, char **argv)
 
     ImGui_ImplSDL2_InitForSDLRenderer(sdlWindow, renderer);
     ImGui_ImplSDLRenderer2_Init(renderer);
+    Uint32 frameStart = SDL_GetTicks();
 
     bool running = true;
     SDL_Event e;
     const int menuWidth = 240;
     while (running) {
-        const Uint8* keys = SDL_GetKeyboardState(nullptr);
         while (SDL_PollEvent(&e)) {
             ImGui_ImplSDL2_ProcessEvent(&e); // passar eventos para o ImGui
             if (e.type == SDL_QUIT) running = false;
             if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) running = false;
             myScene.handleEvent(e);
-            myScene.handleKeyboard(keys);
         }
+        const Uint8* keys = SDL_GetKeyboardState(nullptr);
+        myScene.handleKeyboard(keys);
 
 
         // Iniciar o frame do ImGui
@@ -56,7 +58,8 @@ int main(int argc, char **argv)
         
         // Speed render control
         int speed = myScene.getSpeedRender();
-        if (ImGui::SliderInt("Speed Render", &speed, 1, 60)) {
+        if (ImGui::InputInt("Speed Render", &speed, 1, 5)) {
+            speed = std::clamp(speed, 1, 60);
             myScene.setSpeedRender(speed);
             myScene.markDirty();
         }
@@ -136,6 +139,10 @@ int main(int argc, char **argv)
 
          // Renderizar a cena
         SDL_RenderPresent(renderer);
+        Uint32 frameTime = SDL_GetTicks() - frameStart;
+        if (frameTime < 16) {
+            SDL_Delay(16 - frameTime); // ~60 FPS
+        }
         
     }   
     ImGui_ImplSDLRenderer2_Shutdown();

@@ -90,17 +90,17 @@ utils::HitInfo Cylinder::intersects(const Ray& ray) const{
         utils::Vec4 base = getBaseCenter();
         utils::Vec4 top  = getBaseCenter() + getDirection() * getHeight();
 
-        struct Cap { Flat* flat; utils::Vec4 center; };
-        Cap* caps[] = {
-            new Cap{ new Flat(base, getDirection() * -1.0f), base },
-            new Cap{ new Flat(top, getDirection()), top }
+        struct Cap { Flat flat; utils::Vec4 center; };
+        Cap caps[] = {
+            Cap{ Flat(base, getDirection() * -1.0f), base },
+            Cap{ Flat(top, getDirection()), top }
         };
 
-        for (Cap* cap : caps) {
-            utils::HitInfo capHit = cap->flat->intersects(ray);
+        for (Cap cap : caps) {
+            utils::HitInfo capHit = cap.flat.intersects(ray);
             if (capHit.hit) {
                 // verificar se dentro do círculo de raio
-                if ((capHit.point - cap->center).length() <= radius + 1e-4f) {
+                if ((capHit.point - cap.center).length() <= radius + 1e-4f) {
                     if (!info.hit || capHit.t < info.t) {
                         info.hit = true;
                         info.t = capHit.t;
